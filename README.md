@@ -5,7 +5,7 @@
 
 ## Authors
 
-- [Abdullah Moiz](https://www.github.com/Abdullah-moiz)
+- [Gm-shuvo](https://www.github.com/Gm-shuvo)
 
 ## Features
 
