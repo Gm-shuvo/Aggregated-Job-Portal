@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* {<script src="https://cdn.lordicon.com/bhenfmcm.js"></script>} */
+.active_underline {
+    cursor: pointer;
+    position:relative;
+    
+}
+.active_underline::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 3px;
+    background-color: azure;
+    transition: width 0.3s;
+}
+.active_underline:hover::after {
+    width: 100%;
+}
+.react-autosuggest__container{
+    position: relative;
+}
+.react-autosuggest__container input{
+    width: 100%;
+    padding: 10px 20px;
+    margin: 0 8px;
+    border: none ;
+    --tw-bg-opacity: 1;
+    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+    border-radius: 4px;
+    outline: none;
+    font-size: 1rem/* 16px */;
+    line-height: 1.5rem/* 24px */;
+}
+.react-autosuggest__suggestions-container--open{
+    position: absolute;
+    width:100%;
+    --tw-bg-opacity: 1;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid #aaa; */
+    padding: 10px 20px;
+    /* bottom: -110px; */
+    margin: 0 8px;
+    border-radius: 6px;
+}
+.react-autosuggest__suggestions-container--open li{
+    list-style: none;
+    padding: 2px 3px;
+    border-bottom: 1px solid #bdbdbd;
+    
+}
+.react-autosuggest__suggestions-container--open li:hover{
+    --tw-bg-opacity: 1;
+    background-color: rgb(85, 84, 84);
+    cursor: pointer;
+    
+}
