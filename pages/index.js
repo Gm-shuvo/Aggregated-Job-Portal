@@ -1,4 +1,5 @@
 import Intro from '@/components/Intro'
+
 import NavBar from '@/components/NavBar'
 import Head from 'next/head'
 import { useDispatch } from 'react-redux'
@@ -7,7 +8,6 @@ import { useEffect } from 'react'
 import Cookies from 'js-cookie'
 import { get_job, get_linkedin_job} from '@/Services/job'
 import { setJobData } from '@/Utils/JobSlice'
-import { InfinitySpin } from 'react-loader-spinner'
 import { Loader } from '@/components/Loader'
 import useSWR from 'swr'
 import { useRouter } from 'next/router'

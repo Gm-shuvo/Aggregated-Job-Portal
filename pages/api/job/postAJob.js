@@ -39,7 +39,7 @@ const postAJob = async (req, res) => {
     job_description,
   } = data;
 
-  console.log('data => ', data);
+  // console.log('data => ', data);
 
   const { error } = schema.validate({
     user,
@@ -50,7 +50,7 @@ const postAJob = async (req, res) => {
     job_description,
   });
 
-  console.log('error => ', error);
+  // console.log('error => ', error);
 
   if (error)
     return res
