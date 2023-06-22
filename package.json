@@ -34,6 +34,7 @@
     "react-autosuggest": "^10.1.0",
     "react-data-table-component": "^7.5.3",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.0",
     "react-icons": "^4.9.0",
     "react-loader-spinner": "^5.3.4",
     "react-multi-input": "^1.0.0",

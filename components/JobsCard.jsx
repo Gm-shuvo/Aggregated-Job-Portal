@@ -7,7 +7,8 @@ import { useRouter } from 'next/router'
 export default function JobsCard({job , posted}) {
     const router = useRouter();
     return (
-        <div key={job._id} className='w-full cursor-pointer  transition-all duration-1000  md:w-5/12 m-4 border hover:shadow-xl rounded px-4 md:flex md:flex-wrap'>
+        <>
+        <div key={job._id} className='w-full cursor-pointer  transition-all duration-1000  md:w-5/12 m-4 border hover:shadow-xl rounded-md px-4 md:flex md:flex-wrap'>
             <div className='mb-4 flex  items-center justify-center py-2 '>
                 <Image width={70} height={70} className="flex rounded-full " src={"https://xsgames.co/randomusers/avatar.php?g=male"} alt="no image" />
                 <div className='flex flex-col mx-2 px-2'>
@@ -44,5 +45,6 @@ export default function JobsCard({job , posted}) {
                 }
             </div>
         </div>
+        </>
     )
 }

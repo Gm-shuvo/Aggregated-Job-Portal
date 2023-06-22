@@ -1,57 +1,36 @@
-import mongoose from 'mongoose';
-import User from './User';
+import mongoose from "mongoose";
 
-const JobSchema = new mongoose.Schema({
+const JobSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    job_title: {
+      type: String,
+      required: true,
+    },
+    job_types: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    company_name: {
+      type: String,
+      required: true,
+    },
+    job_location: {
+      type: String,
+      required: true,
+    },
+    job_description: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-    user : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    title: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    salary: {
-        type: Number,
-        required: true,
-    },
-    company: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-    },
-    job_category: {
-        type: String,
-        required: true,
-    },
-    job_type: {
-        type: String,
-        required: true,
-        trim : true,
-    },
-    job_experience: {
-        type: String,
-        required: true,
-    },
-    job_vacancy: {
-        type: Number,
-        required: true,
-    },
-    job_deadline: {
-        type: Date,
-        required: true,
-    },
-
-
-},{timestamps: true});
-
-const Job =  mongoose.models.Job || mongoose.model('Job', JobSchema);
+const Job = mongoose.models.Job || mongoose.model("Job", JobSchema);
 
 export default Job;

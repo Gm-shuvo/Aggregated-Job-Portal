@@ -4,8 +4,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { register_me } from '@/Services/auth';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import NavBar from '@/components/NavBar';
+import Cookies from 'js-cookie';
 
 
 export default function  Register (){
@@ -96,15 +96,15 @@ export default function  Register (){
               </div>
               {/* radio button */}
               <div className="flex items-center justify-between">
-                <div class="flex items-center">
+                <div className="flex items-center">
                     <input checked={selectedOption === 'candidate'}
             onChange={handleOptionChange} id="radio-1" type="radio" value="candidate" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                    <label for="default-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Candidate</label>
+                    <label htmlFor="default-radio-1" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Candidate</label>
                 </div>
-                <div class="flex items-center">
+                <div className="flex items-center">
                     <input checked={selectedOption === 'recruiter'}
             onChange={handleOptionChange} id="radio-2" type="radio" value="recruiter" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                    <label for="default-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Recruiter</label>
+                    <label htmlFor="default-radio-2" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Recruiter</label>
                 </div>
               </div>
               {/* radio button */}

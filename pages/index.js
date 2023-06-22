@@ -5,11 +5,28 @@ import { useDispatch } from 'react-redux'
 import { setUserToken, setUserData } from '@/Utils/UserSlice'
 import { useEffect } from 'react'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
-import useSWR from 'swr'
 import { get_job, get_linkedin_job} from '@/Services/job'
 import { setJobData } from '@/Utils/JobSlice'
 import { InfinitySpin } from 'react-loader-spinner'
+import { Loader } from '@/components/Loader'
+import useSWR from 'swr'
+import { useRouter } from 'next/router'
+
+// //getserver side props
+//  export async function getServerSideProps() {
+//   const jobData = await get_job()
+//   const LinkedInData = await get_linkedin_job()
+//   return {
+//     props: {
+//       jobData,
+//       LinkedInData,
+
+//     }, // will be passed to the page component as props
+//   }
+// }
+
+
+
 export default function Home() {
   const dispatch = useDispatch();
   const token = Cookies.get('token');
@@ -19,12 +36,12 @@ export default function Home() {
   const { data: jobData, error: er1, isLoading: load1 } = useSWR('api/db1/getAllJobs', get_job);
 
 
-  const {data: LinkedInJobData , error: er2 , isLoading: load2} = useSWR('api/db2/getAllLinkedInJobs', get_linkedin_job)
+  const {data: LinkedInData , error: er2 , isLoading: load2} = useSWR('api/db2/getAllLinkedInJobs', get_linkedin_job)
 
   console.log('data', jobData);
-  console.log(LinkedInJobData);
+  console.log('data', LinkedInData);
 
-  jobData = [...jobData?.data, ...LinkedInJobData?.data]
+  // jobData = [...jobData?.data, ...LinkedInJobData?.data]
 
   useEffect(() => {
     if (jobData) dispatch(setJobData(jobData?.data))
@@ -62,18 +79,15 @@ export default function Home() {
       </Head>
 
       {
-        load1 || load2 ? (
-          <div className='bg-gray w-full h-screen flex items-center flex-col justify-center'>
-            <InfinitySpin width='200' color="#4f46e5" />
-            <p className='text-xs uppercase'>Loading Resources Hold Tight...</p>
-          </div>
-        ) : (
+        !load1 && !load2 ? (
           <>
             <NavBar />
             <div className="w-full h-screen bg-gray-200  text-black">
               <Intro />
             </div>
           </>
+        ):(
+          <Loader />
         )
       }
     </>

@@ -25,7 +25,7 @@ export const post_job = async (formData) => {
 // get job api
 export const get_job = async () => {
     try {
-        const res = await fetch(`/api/db1/getAllJobs`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/db1/getAllJobs`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export const get_job = async () => {
 
 export const get_linkedin_job = async () => {
     try {
-        const res = await fetch(`/api/db2/getAllLinkedInJobs`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/db2/getAllLinkedInJobs`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

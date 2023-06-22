@@ -1,9 +1,10 @@
 
 
-import Job from '@/pages/api/db1/Job';
+import { connectDBJobPortal } from '@/DB/DbJobProtal';
+import Job from '@/models/Job'
 
 export default async function handler(req, res) {
-    // await connectDBJobPortal();
+    await connectDBJobPortal();
     
     // console.log('req', req);
     const { method } = req;
@@ -18,10 +19,10 @@ export default async function handler(req, res) {
 
 
 const getAllJobs = async (req, res) => {
-    try {
-        const JobData = await Job.find();
-        
-    
+  try {
+      await connectDBJobPortal();
+      const JobData = await Job.find();
+
         return res.status(200).json({
           success: true,
           data: JobData,

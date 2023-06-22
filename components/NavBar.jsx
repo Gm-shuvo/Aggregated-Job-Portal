@@ -21,6 +21,7 @@ export default function NavBar() {
 
     const Router = useRouter();
     const user = useSelector(state => state.User.userData)
+
     console.log(user?.type)
 
 
@@ -72,8 +73,9 @@ export default function NavBar() {
 
     const handleLogout = async () => {
         Cookies.remove('token');
-        localStorage.removeItem('user')
-        Router.reload();
+        localStorage.removeItem('user');
+        // Router.reload();
+        Router.push('/');
     }
 
 

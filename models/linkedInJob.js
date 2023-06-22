@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import DbLinkedIn from '@/pages/api/db2/connection';
+// import DbLinkedIn from '@/pages/api/db2/connection';
 
-const JobSchema = new mongoose.Schema({
+const LinkedInJobSchema = new mongoose.Schema({
   job_title: {
     type: String,
     required: true,
@@ -32,6 +32,6 @@ const JobSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-const linkedInJob =  DbLinkedIn.models.linkedInJob || DbLinkedIn.model('linkedInJob', JobSchema);
+const linkedInJob =  mongoose.models.linkedInJob || mongoose.model("linkedInJob", LinkedInJobSchema);
 
 export default linkedInJob;

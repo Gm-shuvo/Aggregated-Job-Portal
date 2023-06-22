@@ -6,7 +6,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const nextConfig = {
   images: {
-    domains: ['api.dicebear.com', 'xsgames.co'],
+    domains: ['api.dicebear.com', 'xsgames.co', 'www.google.com'],
+
   },
   reactStrictMode: true,
   plugins: [
