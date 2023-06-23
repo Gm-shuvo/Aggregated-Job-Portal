@@ -10,7 +10,9 @@ export default function useJobsData() {
 
   const { data: jobData, error: er1, isLoading: load1 } = useSWR("api/db1/getAllJobs", get_job);
   const { data: LinkedInData, error: er2, isLoading: load2 } = useSWR("api/db2/getAllLinkedInJobs", get_linkedin_job);
-
+ 
+  console.log(jobData)
+  
   useEffect(() => {
     if (jobData?.data && LinkedInData?.data) {
       const combinedJobs = [

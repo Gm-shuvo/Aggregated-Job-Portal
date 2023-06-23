@@ -6,8 +6,8 @@ import Joi from 'joi';
 const schema = Joi.object({
   user: Joi.required(),
   job_title: Joi.string().required(),
-  job_types: Joi.string().valid('Full-time', 'Part-time', 'Remote', 'Intern').optional(),
-  job_level: Joi.string().optional(),
+  job_types: Joi.string().valid('Full-time', 'Part-time', 'Remote', 'Intern').required(),
+  job_level: Joi.string().required(),
   company_name: Joi.string().required(),
   job_location: Joi.string().required(),
   job_description: Joi.string().required(),
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 }
 
 const postAJob = async (req, res) => {
-  await connectDBJobPortal();
+  
   const data = req.body;
 
   const {
@@ -41,7 +41,7 @@ const postAJob = async (req, res) => {
     job_description,
   } = data;
 
-  // console.log('data => ', data);
+  console.log('data => ', data);
 
   const { error } = schema.validate({
     user,
@@ -53,7 +53,7 @@ const postAJob = async (req, res) => {
     job_description,
   });
 
-  // console.log('error => ', error);
+  console.log('error => ', error);
 
   if (error)
     return res

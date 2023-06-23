@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
 
 const getSearchJobs = async (req, res) => {
-    await connectDBJobPortal();
+    
     const {job_type, query, location, category} = req.query;
     const filter = {};
     if(query){

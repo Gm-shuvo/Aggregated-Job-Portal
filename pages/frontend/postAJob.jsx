@@ -9,8 +9,8 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
 const options = [
-  { value: "Full-Time", label: "Full-Time" },
-  { value: "Part-Time", label: "Part-Time" },
+  { value: "Full-time", label: "Full-time" },
+  { value: "Part-time", label: "Part-time" },
   { value: "Remote", label: "Remote" },
   { value: "Intern", label: "Intern" },
 ];
@@ -57,6 +57,11 @@ function PostAJob() {
 
     if (!formData.job_types) {
       errors.job_types = "Job Types is required";
+      hasErrors = true;
+    }
+
+    if (!formData.job_level) {
+      errors.job_level = "Job Level is required";
       hasErrors = true;
     }
 

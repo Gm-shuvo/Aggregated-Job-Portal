@@ -1,5 +1,3 @@
-
-
 import { connectDBJobPortal } from '@/DB/DbJobProtal';
 import Job from '@/models/Job'
 
@@ -20,8 +18,8 @@ export default async function handler(req, res) {
 
 const getAllJobs = async (req, res) => {
   try {
-      await connectDBJobPortal();
-      const JobData = await Job.find();
+      
+      const JobData = await Job.find({});
 
         return res.status(200).json({
           success: true,
