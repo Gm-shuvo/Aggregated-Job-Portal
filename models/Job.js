@@ -15,6 +15,11 @@ const JobSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    job_level:{
+      type: String,
+      required: true,
+      trim: true,
+    },
     company_name: {
       type: String,
       required: true,

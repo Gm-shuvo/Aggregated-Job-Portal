@@ -2,10 +2,10 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import {TbBuildingBank} from 'react-icons/tb'
 import {SlLocationPin} from 'react-icons/sl'
-import {CgSandClock} from 'react-icons/cg'
+import {PiClockCountdownBold} from 'react-icons/pi'
 const JobsCard = ({ job }) => {
 //   console.log(job)
-  const { job_title, company_name, job_description, job_location, createdAt, job_date} = job;
+  const { job_title, company_name, job_description, job_location, job_date, job_types} = job;
   console.log(job);
   const router = useRouter();
 
@@ -21,23 +21,33 @@ const JobsCard = ({ job }) => {
     >
       <div className="flex justify-center space-y-1 flex-col">
         <h1 className="font-semibold text-base md:text-lg">{job_title}</h1>
-        <div className="flex items-start  space-x-4 text-xs text-gray-500">
+        <div className="flex items-start  space-x-4 text-xs text-gray-500 md:text-sm">
           <div className="flex items-baseline justify-center space-x-1">
-            <TbBuildingBank className='text-xs'/>
+            <TbBuildingBank className=''/>
             <span>{company_name}</span>
           </div>
           <div className="flex items-baseline justify-center space-x-1">
-            <SlLocationPin className='text-xs'/>
+            <SlLocationPin className=''/>
             <span>{job_location}</span>
           </div>
         </div>
       </div>
-      <div className="destext text-sm md:text-base mt-4 ">{job_description}</div>
-      <div className="flex items-center justify-between mt-4 mb-2 border-t-2 border-b-gray-200">
-        <div className="flex items-center space-x-2 mt-1">
-            <CgSandClock/>
-            <span>{}</span>
+      <div className="destext text-sm md:text-md mt-4 ">{job_description}</div>
+      <div className="flex items-center justify-between mt-4 mb-2 px-2 py-3 border-t-2 border-b-gray-200">
+        <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
+            <PiClockCountdownBold className=''/>
+            <span className=''>{job_date}</span>
         </div>
+            <div className="flex items-center space-x-4 ">
+                <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
+                    <PiClockCountdownBold className=''/>
+                    <span className=''>{job_types}</span>
+                </div>
+                <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
+                    <PiClockCountdownBold className=''/>
+                    <span className=''>{job_date}</span>
+                </div>
+            </div>
       </div>
     </div>
   );

@@ -9,9 +9,16 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
 const options = [
-  { value: "fulltime", label: "Full Time" },
-  { value: "parttime", label: "Part Time" },
-  { value: "remote", label: "Remote" },
+  { value: "Full-Time", label: "Full-Time" },
+  { value: "Part-Time", label: "Part-Time" },
+  { value: "Remote", label: "Remote" },
+  { value: "Intern", label: "Intern" },
+];
+
+const optionsLevel = [
+  { value: "Entry", label: "Entry" },
+  { value: "Imtermediate", label: "Imtermediate" },
+  { value: "Senior", label: "Senior" },
 ];
 
 function PostAJob() {
@@ -21,13 +28,14 @@ function PostAJob() {
     user: user?._id,
     job_title: "",
     job_types: "",
+    job_level: "",
     company_name: "",
     job_location: "",
     job_description: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
-//   consloe.log(formData);
+  
 
   useEffect(() => {
     if (!user?._id || !Cookies.get("token")) {
@@ -71,9 +79,12 @@ function PostAJob() {
     return !hasErrors;
   }, [formData]);
 
+  
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+      
+      console.log(formData);
 
       if (formData.user && validateForm()) {
         const res = await post_job(formData);
@@ -94,18 +105,25 @@ function PostAJob() {
     [formData, validateForm, router]
   );
 
-  const handleJobTypeChange = useCallback(
-    (selectedOption) => {
-      const selectedValue = selectedOption ? selectedOption.value : "";
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        job_types: selectedValue,
-      }));
-    },
-    []
-  );
+  const handleJobTypeChange = useCallback((selectedOption) => {
+    const selectedValue = selectedOption ? selectedOption.value : "";
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      job_types: selectedValue,
+    }));
+  }, []);
 
   const defaultValue = useMemo(() => options[0], []);
+
+  const handleJobLevelChange = useCallback((selectedOption) => {
+    const selectedValue = selectedOption ? selectedOption.value : "";
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      job_level: selectedValue,
+    }));
+  }, []);
+
+  const defaultValueLevel = useMemo(() => optionsLevel[0], []);
 
   return (
     <>
@@ -114,7 +132,10 @@ function PostAJob() {
         <h1 className="text-xl mt-4 uppercase tracking-widest border-b-2 border-b-indigo-600 py-2 font-semibold mb-8 md:text-2xl lg:text-4xl">
           Enter Job Details
         </h1>
-        <form onSubmit={handleSubmit} className="sm:w-1/2 w-full px-4 mx-4 h-full">
+        <form
+          onSubmit={handleSubmit}
+          className="sm:w-1/2 w-full px-4 mx-4 h-full"
+        >
           <div className="w-full mb-4 flex flex-col items-start justify-center">
             <label htmlFor="title" className="mb-1 text-base font-semibold">
               Title:
@@ -132,12 +153,17 @@ function PostAJob() {
               }
             />
             {formErrors.job_title && (
-              <span className="text-sm text-red-500">{formErrors.job_title}</span>
+              <span className="text-sm text-red-500">
+                {formErrors.job_title}
+              </span>
             )}
           </div>
 
           <div className="w-full mb-4 flex flex-col items-start justify-center">
-            <label htmlFor="companyName" className="mb-1 text-base font-semibold">
+            <label
+              htmlFor="companyName"
+              className="mb-1 text-base font-semibold"
+            >
               Company Name:
             </label>
             <input
@@ -153,7 +179,9 @@ function PostAJob() {
               }
             />
             {formErrors.company_name && (
-              <span className="text-sm text-red-500">{formErrors.company_name}</span>
+              <span className="text-sm text-red-500">
+                {formErrors.company_name}
+              </span>
             )}
           </div>
 
@@ -174,12 +202,17 @@ function PostAJob() {
               }
             />
             {formErrors.job_location && (
-              <span className="text-sm text-red-500">{formErrors.job_location}</span>
+              <span className="text-sm text-red-500">
+                {formErrors.job_location}
+              </span>
             )}
           </div>
 
           <div className="w-full mb-4 flex flex-col items-start justify-center">
-            <label htmlFor="description" className="mb-1 text-base font-semibold">
+            <label
+              htmlFor="description"
+              className="mb-1 text-base font-semibold"
+            >
               Description:
             </label>
             <textarea
@@ -196,21 +229,44 @@ function PostAJob() {
               placeholder="Enter description of job"
             />
             {formErrors.job_description && (
-              <span className="text-sm text-red-500">{formErrors.job_description}</span>
+              <span className="text-sm text-red-500">
+                {formErrors.job_description}
+              </span>
             )}
           </div>
+          <div className="flex items-center justify-between my-2">
+            <Select
+              className="w-full flex flex-col items-start justify-center"
+              defaultValue={defaultValue}
+              value={options.find(
+                (option) => option.value === formData.job_types
+              )}
+              onChange={handleJobTypeChange}
+              placeholder="Please Select Job type"
+              options={options}
+            />
+            {formErrors.job_types && (
+              <span className="text-sm text-red-500">
+                {formErrors.job_types}
+              </span>
+            )}
 
-          <Select
-            className="w-full flex flex-col items-start justify-center"
-            defaultValue={defaultValue}
-            value={options.find((option) => option.value === formData.job_types)}
-            onChange={handleJobTypeChange}
-            placeholder="Please Select Job type"
-            options={options}
-          />
-          {formErrors.job_types && (
-            <span className="text-sm text-red-500">{formErrors.job_types}</span>
-          )}
+            <Select
+              className="w-full flex flex-col items-start justify-center"
+              defaultValue={defaultValueLevel}
+              value={optionsLevel.find(
+                (option) => option.value === formData.job_level
+              )}
+              onChange={handleJobLevelChange}
+              placeholder="Please Select Job Level"
+              options={optionsLevel}
+            />
+            {formErrors.job_level && (
+              <span className="text-sm text-red-500">
+                {formErrors.job_level}
+              </span>
+            )}
+          </div>
 
           <button
             type="submit"
