@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import {TbBuildingBank} from 'react-icons/tb'
 import {SlLocationPin} from 'react-icons/sl'
-
+import {CgSandClock} from 'react-icons/cg'
 const JobsCard = ({ job }) => {
 //   console.log(job)
   const { job_title, company_name, job_description, job_location, createdAt, job_date} = job;
@@ -34,7 +34,10 @@ const JobsCard = ({ job }) => {
       </div>
       <div className="destext text-sm md:text-base mt-4 ">{job_description}</div>
       <div className="flex items-center justify-between mt-4 mb-2 border-t-2 border-b-gray-200">
-        .
+        <div className="flex items-center space-x-2 mt-1">
+            <CgSandClock/>
+            <span>{}</span>
+        </div>
       </div>
     </div>
   );
