@@ -1,50 +1,43 @@
-import React from 'react'
-import Image from 'next/image'
-import { BsDot } from 'react-icons/bs'
-import { AiOutlineArrowRight } from 'react-icons/ai'
-import { useRouter } from 'next/router'
+import React from 'react';
+import { useRouter } from 'next/router';
+import {TbBuildingBank} from 'react-icons/tb'
+import {SlLocationPin} from 'react-icons/sl'
 
-export default function JobsCard({job , posted}) {
-    const router = useRouter();
-    return (
-        <>
-        <div key={job._id} className='w-full cursor-pointer  transition-all duration-1000  md:w-5/12 m-4 border hover:shadow-xl rounded-md px-4 md:flex md:flex-wrap'>
-            <div className='mb-4 flex  items-center justify-center py-2 '>
-                <Image width={70} height={70} className="flex rounded-full " src={"https://xsgames.co/randomusers/avatar.php?g=male"} alt="no image" />
-                <div className='flex flex-col mx-2 px-2'>
-                    <h1 className='text-xl md:text-2xl font-semibold'>{job?.user.name}</h1>
-                    <p className='text-xs sm:text-sm md:text-base text-gray-800'>{job?.company}</p>
-                </div>
-            </div>
-            <div className='mb-4 flex   items-start justify-center py-2 flex-col'>
-                <div className='flex  px-2 py-2 items-center justify-center '>
-                    <BsDot className='text-4xl font-extrabold text-indigo-600' />
-                    <h1 className='text-lg text-gray-900'>Salary :</h1>
-                    <p className='text-base  font-semibold'>{job?.salary}$ / month</p>
-                </div>
-                <div className='flex px-2 py-2 items-center  justify-center'>
-                    <BsDot className='text-4xl font-extrabold text-indigo-600' />
-                    <h1 className='text-lg text-gray-900'>Deadline :</h1>
-                    <p className='text-base  font-semibold'>{new Date(`${job?.job_deadline}`).toLocaleDateString('en-GB')}</p>
-                </div>
-            </div>
-            <div className='mb-4 flex flex-col md:flex-wrap md:flex-row w-full justify-between  items-center '>
+const JobsCard = ({ job }) => {
+//   console.log(job)
+  const { job_title, company_name, job_description, job_location, createdAt, job_date} = job;
+  console.log(job);
+  const router = useRouter();
 
-                <div className='mb-4 flex  items-start justify-center py-2 flex-col'>
-                    <div className='flex px-6 rounded-2xl py-1 items-center justify-center bg-indigo-200 text-indigo-900  '>
-                        <p>{job?.title}</p>
-                    </div>
-                </div>
-                {
-                    posted ? (
-                        <button onClick={() => router.push(`/frontend/detailPostedJob/${job?._id}`)} className='my-2 py-2 px-4  border border-indigo-600   rounded flex items-center justify-center transition-all duration-700 hover:bg-indigo-600 hover:text-white text-indigo-600 font-semibold'>View Applications <AiOutlineArrowRight className='mx-2 text-xl' /></button>
-                    ) : (
+  const handleCardClick = () => {
+    router.push(`/jobs/${job._id}`);
+  };
 
-                        <button onClick={() => router.push(`/frontend/jobDetails/${job?._id}`)} className='my-2 py-2 px-4  border border-indigo-600   rounded flex items-center justify-center transition-all duration-700 hover:bg-indigo-600 hover:text-white text-indigo-600 font-semibold'>View Detail <AiOutlineArrowRight className='mx-2 text-xl' /></button>
-                    )
-                }
-            </div>
+  return (
+    <div
+      key={job._id}
+      className="group w-full p-4 cursor-pointer transition-all duration-600 border-none shadow-gray-400 hover:shadow-lg rounded-md"
+      onClick={handleCardClick}
+    >
+      <div className="flex justify-center space-y-1 flex-col">
+        <h1 className="font-semibold text-base md:text-lg">{job_title}</h1>
+        <div className="flex items-start  space-x-4 text-xs text-gray-500">
+          <div className="flex items-baseline justify-center space-x-1">
+            <TbBuildingBank className='text-xs'/>
+            <span>{company_name}</span>
+          </div>
+          <div className="flex items-baseline justify-center space-x-1">
+            <SlLocationPin className='text-xs'/>
+            <span>{job_location}</span>
+          </div>
         </div>
-        </>
-    )
+      </div>
+      <div className="destext text-sm md:text-base mt-4 ">{job_description}</div>
+      <div className="flex items-center justify-between mt-4 mb-2 border-t-2 border-b-gray-200">
+        .
+      </div>
+    </div>
+  );
 }
+
+export default JobsCard;
