@@ -1,18 +1,23 @@
 import mongoose from 'mongoose';
 
-// connecting to database
+let connectionInstance = null;
+
+// Connecting to the database
 const connectDB = async (dbUrl) => {
-    try {
+  try {
+    if (!connectionInstance) {
       await mongoose.connect(dbUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
+      connectionInstance = mongoose.connection;
       console.log('Connected to the database successfully!');
-    } catch (error) {
-      console.error('Failed to connect to the database:', error);
-      throw error;
     }
-}
-
+    return connectionInstance;
+  } catch (error) {
+    console.error('Failed to connect to the database:', error);
+    throw error;
+  }
+};
 
 export { connectDB };

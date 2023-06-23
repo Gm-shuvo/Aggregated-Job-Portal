@@ -19,7 +19,7 @@ export default async function handler (req, res) {
 
 
 const getSpecifiedJob = async (req, res) => {
-    await connectDBJobPortal();
+    
     const data = req.query;
     const id = data?.id
 

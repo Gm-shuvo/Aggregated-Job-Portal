@@ -5,12 +5,12 @@ import {SlLocationPin} from 'react-icons/sl'
 import {PiClockCountdownBold} from 'react-icons/pi'
 const JobsCard = ({ job }) => {
 //   console.log(job)
-  const { job_title, company_name, job_description, job_location, job_date, job_types, job_level} = job;
-  console.log(job);
+  const { job_title, company_name, job_description, job_location, job_date, job_type, job_level} = job;
+  console.log(job_type);
   const router = useRouter();
 
   const handleCardClick = () => {
-    router.push(`/jobs/${job._id}`);
+    router.push(`/frontend/singleJob/${job._id}`);
   };
 
   return (
@@ -39,14 +39,15 @@ const JobsCard = ({ job }) => {
             <span className=''>{job_date}</span>
         </div>
             <div className="flex items-center space-x-4 ">
-                <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
+                {job_type && <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
                     <PiClockCountdownBold className=''/>
-                    <span className=''>{job_types}</span>
-                </div>
-                <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
+                    <span className=''>{job_type}</span>
+                </div>}
+
+                {job_level && <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
                     <PiClockCountdownBold className=''/>
                     <span className=''>{job_level}</span>
-                </div>
+                </div>}
             </div>
       </div>
     </div>

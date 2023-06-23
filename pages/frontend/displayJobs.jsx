@@ -16,6 +16,8 @@ export default function DisplayJobs() {
 
   const jobList = useSelector((state) => state.Job.JobData) || [];
 
+  console.log(jobList)
+
   return (
     <>
       <NavBar />

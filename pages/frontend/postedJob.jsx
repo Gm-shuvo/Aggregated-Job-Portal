@@ -17,7 +17,7 @@ function PostedJobs() {
   const myJobs = useSelector((state) => state?.Job?.myJobs);
   const id = user?._id;
   
-  console.log(user)
+  console.log(myJobs)
 
   useEffect(() => {
     if (!id || !Cookies.get("token")) {
