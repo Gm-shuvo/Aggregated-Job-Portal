@@ -18,75 +18,86 @@ import 'react-toastify/dist/ReactToastify.css';
 import { InfinitySpin } from 'react-loader-spinner'
 import useSWR from 'swr'
 import { book_mark_job } from '@/Services/job/bookmark'
+import { Loader } from '@/components/Loader'
+
 
 
 
 export default function JobDetails() {
     const router = useRouter()
     const dispatch = useDispatch();
+
     const { id } = router.query
+    
     const JobData = useSelector(state => state?.Job?.JobData)
     const machingData = useSelector(state => state?.Job?.matchingData)
     const user = useSelector(state => state?.User?.userData)
+  
     const [JobDetails, setJobDetails] = useState(null);
 
 
-    const { data, error , isLoading } = useSWR(`/get-specified-job`, () => get_specified_job(id));
+    const { data: jobData, error: err1 , isLoading: isLoad1 } = useSWR(`/get-specified-job?id`, () => get_specified_job(id));
+    
+    
+    const { data: linkedInJob , error: err2 , isLoading: isLoad2 } = useSWR(`/get-specified-job?id`, () => get_specified_job(id));
+    
+
+    console.log("jobData ==>", jobData)
+    console.log("linkedInJob ==>", linkedInJob)
 
 
-    useEffect(() => {
-        if(data) setJobDetails(data?.data)
-    }, [data])
 
+    // useEffect(() => {
+    //     console.log(data)
+    //     if(data && !isLoading) setJobDetails(data?.data)
+    // }, [data, isLoading])
 
+    
     if(error) toast.error(error)
 
 
-    useEffect(() => {
-        if (JobDetails) {
-            const filteredJobData = JobData?.filter((job) => job.job_category === JobDetails?.job_category)
-            const filteredJobData2 = filteredJobData?.filter((job) => job._id !== JobDetails?._id)
-            dispatch(setMatchingJobDat(filteredJobData2))
-        }
-    }, [JobDetails, JobData, dispatch])
+    // useEffect(() => {
+    //     if (JobDetails) {
+    //         const filteredJobData = JobData?.filter((job) => job.job_category === JobDetails?.job_category)
+    //         const filteredJobData2 = filteredJobData?.filter((job) => job._id !== JobDetails?._id)
+    //         dispatch(setMatchingJobDat(filteredJobData2))
+    //     }
+    // }, [JobDetails, JobData, dispatch])
+    
+    
+    // const handleApply = () => {
+    //     if (!user) return toast.error('Please Login First');
+    //     router.push(`/frontend/applyJob/${id}`)
+    // }
 
 
-    const handleApply = () => {
-        if (!user) return toast.error('Please Login First');
-        router.push(`/frontend/applyJob/${id}`)
-    }
+    // const handleBookMark = async () =>  {
 
+    //     if (!user) return toast.error('Please Login First');
 
-    const handleBookMark = async () =>  {
+    //     const data = {user : user?._id , job : JobDetails?._id}
+    //     const res = await book_mark_job(data);
+    //     if(res.success) {
+    //        return toast.success(res.message)
+    //     }
+    //     else {
+    //         return toast.error(res.message)
+    //     }
 
-        if (!user) return toast.error('Please Login First');
-
-        const data = {user : user?._id , job : JobDetails?._id}
-        const res = await book_mark_job(data);
-        if(res.success) {
-           return toast.success(res.message)
-        }
-        else {
-            return toast.error(res.message)
-        }
-
-    }
+    // }
 
     return (
         <>
             {
-                isLoading ? (
-                    <div className='bg-gray w-full h-screen flex items-center flex-col justify-center'>
-                        <InfinitySpin width='200' color="#4f46e5" />
-                        <p className='text-xs uppercase'>Loading Resources Hold Tight...</p>
-                    </div>
+                flase ? (
+                    <Loader/>
                 ) : (
                     <>
                         <ToastContainer />
                         <NavBar />
                         <div className='w-full  py-20 flex items-center md:px-8 px-2  justify-center flex-col  '>
                             <div className='w-full h-40 bg-gray-50 text-indigo-600 font-bold flex items-center justify-center flex-col'>
-                                <h1 className='text-3xl'>Job Details</h1>
+                               {/* <Image width={200} height={200} src='/public/jobportal_banner.jpg' alt='Banner' className='bg-cover' /> */}
                             </div>
                             <div className='flex items-center  justify-center w-full py-10'>
                                 <div className='flex w-full px-8 md:px-20 items-start md:flex-row flex-col md:justify-between justify-center'>
@@ -140,8 +151,8 @@ export default function JobDetails() {
                                                 <p className='text-xs text-red-500'>unable Apply to your Own jobs</p>
                                             ) : (
                                                 <div className='flex items-center justify-center  '>
-                                                    <BsFillBookmarkCheckFill onClick={handleBookMark} className='text-indigo-600 text-4xl cursor-pointer  mx-2'/>
-                                                    <button onClick={handleApply} className='md:px-6 md:py-3 px-3 py-2 mt-2 md:mt-0 bg-indigo-500 rounded text-base tracking-widest uppercase transition-all duration-700 hover:bg-indigo-900 text-white  '>Apply Position</button>
+                                                    <BsFillBookmarkCheckFill onClick={""} className='text-indigo-600 text-4xl cursor-pointer  mx-2'/>
+                                                    <button onClick={""} className='md:px-6 md:py-3 px-3 py-2 mt-2 md:mt-0 bg-indigo-500 rounded text-base tracking-widest uppercase transition-all duration-700 hover:bg-indigo-900 text-white  '>Apply Position</button>
                                                 </div>
                                             )
                                         }

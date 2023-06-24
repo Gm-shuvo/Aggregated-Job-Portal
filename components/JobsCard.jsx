@@ -6,7 +6,7 @@ import {PiClockCountdownBold} from 'react-icons/pi'
 const JobsCard = ({ job }) => {
 //   console.log(job)
   const { job_title, company_name, job_description, job_location, job_date, job_type, job_level} = job;
-  console.log(job_type);
+  console.log(job);
   const router = useRouter();
 
   const handleCardClick = () => {

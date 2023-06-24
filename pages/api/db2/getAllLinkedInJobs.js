@@ -21,7 +21,7 @@ const getAllLinkedInJobs = async (req, res) => {
   try {
     
     const db = mongoose.connection.db;
-    const collect = db.collection('linkedInJobs');
+    const collect = db.collection('linkedinjobs');
     const jobData = await collect.find({}).toArray();
     
     return res.status(200).json({

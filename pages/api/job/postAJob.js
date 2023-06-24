@@ -6,7 +6,7 @@ import Joi from 'joi';
 const schema = Joi.object({
   user: Joi.required(),
   job_title: Joi.string().required(),
-  job_types: Joi.string().valid('Full-time', 'Part-time', 'Remote', 'Intern').required(),
+  job_type: Joi.string().valid('Full-time', 'Part-time', 'Remote', 'Intern').required(),
   job_level: Joi.string().required(),
   company_name: Joi.string().required(),
   job_location: Joi.string().required(),
@@ -34,7 +34,7 @@ const postAJob = async (req, res) => {
   const {
     user,
     job_title,
-    job_types,
+    job_type,
     job_level,
     company_name,
     job_location,
@@ -46,7 +46,7 @@ const postAJob = async (req, res) => {
   const { error } = schema.validate({
     user,
     job_title,
-    job_types,
+    job_type,
     job_level,
     company_name,
     job_location,
@@ -64,7 +64,7 @@ const postAJob = async (req, res) => {
     const creatingJob = await Job.create({
       user,
       job_title,
-      job_types,
+      job_type,
       job_level,
       company_name,
       job_location,

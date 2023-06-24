@@ -27,7 +27,7 @@ function PostAJob() {
   const [formData, setFormData] = useState({
     user: user?._id,
     job_title: "",
-    job_types: "",
+    job_type: "",
     job_level: "",
     company_name: "",
     job_location: "",
@@ -55,8 +55,8 @@ function PostAJob() {
       hasErrors = true;
     }
 
-    if (!formData.job_types) {
-      errors.job_types = "Job Types is required";
+    if (!formData.job_type) {
+      errors.job_type = "Job Type is required";
       hasErrors = true;
     }
 
@@ -114,7 +114,7 @@ function PostAJob() {
     const selectedValue = selectedOption ? selectedOption.value : "";
     setFormData((prevFormData) => ({
       ...prevFormData,
-      job_types: selectedValue,
+      job_type: selectedValue,
     }));
   }, []);
 
@@ -244,15 +244,15 @@ function PostAJob() {
               className="w-full flex flex-col items-start justify-center"
               defaultValue={defaultValue}
               value={options.find(
-                (option) => option.value === formData.job_types
+                (option) => option.value === formData.job_type
               )}
               onChange={handleJobTypeChange}
               placeholder="Please Select Job type"
               options={options}
             />
-            {formErrors.job_types && (
+            {formErrors.job_type && (
               <span className="text-sm text-red-500">
-                {formErrors.job_types}
+                {formErrors.job_type}
               </span>
             )}
 

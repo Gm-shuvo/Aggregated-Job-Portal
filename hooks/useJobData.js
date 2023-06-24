@@ -13,23 +13,16 @@ export default function useJobsData() {
 
   useEffect(() => {
     if (jobData?.data && LinkedInData?.data) {
-      const formattedJobData = jobData.data.map(({ createdAt,job_types,...job }) => {
-        const job_type = job_types
+      const formattedJobData = jobData.data.map(({ createdAt,...job }) => {
+        
         return {
           ...job,
-          job_type,
+          source:'JobBit',
           job_date: formatDistanceToNow(new Date(createdAt), { addSuffix: true })
         };
       });
 
-      const formattedLinkedInData = LinkedInData.data.map(({ job_types, ...job }) => {
-        const [job_level,k, job_type] = job_types.split(' ');
-        return {
-          ...job,
-          job_level,
-          job_type,
-        };
-      });
+      const formattedLinkedInData = LinkedInData.data;
 
       const combinedJobs = [
         ...formattedJobData,

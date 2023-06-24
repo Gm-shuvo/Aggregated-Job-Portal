@@ -70,10 +70,24 @@ export const get_specified_job = async (id) => {
     }
 }
 
+export const get_specified_LinkedInjob = async (id) => {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSpecifiedLinkedInJob?id=${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('token')}`
+            },
+        })
+        const data =await res.json();
+        return data;
+    } catch (error) {
+        console.log('error in getting  specified job (service) => ', error);
+    }
+}
 
 
 // apply  job api
-
 export const apply_job = async (formData) => {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/applyJob`, {
