@@ -97,6 +97,13 @@ function PostAJob() {
             router.push("/frontend/displayJobs");
           }, 1000);
         } else {
+          if(error === 'TokenExpiredError'){
+            Cookies.remove("token");
+            localStorage.removeItem("user");
+            dispatch(setUserData(null));
+
+            router.push('/auth/login');
+          }
           toast.error(res.message);
         }
       }

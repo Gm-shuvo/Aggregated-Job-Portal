@@ -4,7 +4,6 @@ import Job from '@/models/Job';
 import Joi from 'joi';
 
 const schema = Joi.object({
-  user: Joi.required(),
   job_title: Joi.string().required(),
   job_type: Joi.string().valid('Full-time', 'Part-time', 'Remote', 'Intern').required(),
   job_level: Joi.string().required(),
@@ -30,9 +29,10 @@ export default async function handler(req, res) {
 const postAJob = async (req, res) => {
   
   const data = req.body;
-
+  const userId = req.userId;
+  console.log('userId => ', userId);
   const {
-    user,
+    
     job_title,
     job_type,
     job_level,
@@ -44,7 +44,6 @@ const postAJob = async (req, res) => {
   console.log('data => ', data);
 
   const { error } = schema.validate({
-    user,
     job_title,
     job_type,
     job_level,
@@ -62,7 +61,7 @@ const postAJob = async (req, res) => {
 
   try {
     const creatingJob = await Job.create({
-      user,
+      user: userId.id,
       job_title,
       job_type,
       job_level,

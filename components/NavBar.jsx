@@ -45,7 +45,7 @@ export default function NavBar() {
             return () => {
                 document.removeEventListener('click', handleClick, true);
             };
-        }, [ref]);
+        }, [ref, callback]);
 
         return ref;
     };
@@ -74,6 +74,7 @@ export default function NavBar() {
     const handleLogout = async () => {
         Cookies.remove('token');
         localStorage.removeItem('user');
+        dispatch(setUserData(null));
         // Router.reload();
         Router.push('/');
     }

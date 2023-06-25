@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ success: false, message: 'Incorrect Email or Password' });
     }
 
-    const token = jwt.sign({ id: checkUser._id, email: checkUser.email }, process.env.JWT_SECRET, {expiresIn: '1d'});
+    const token = jwt.sign({ id: checkUser._id, email: checkUser.email }, process.env.JWT_SECRET, {expiresIn: '2m'});
     const finalData = { token, user: checkUser };
     return res.status(200).json({ success: true, message: 'Login Successful', finalData });
   } catch (error) {

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const validateToken = (req, res, next) => {
-  const token = req.headers.authorization.split(' ')[1];
+  const token = req.headers.authorization?.split(' ')[1];
 
   // console.log(token);
 
@@ -11,10 +11,11 @@ const validateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    req.userId = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ success: false, message: 'Unauthorized Please login' });
+    console.log('Error in validating token (server) => ', error);
+    return res.status(401).json({ success: false, error: error.name,  message: 'Unauthorized Please login' });
   }
 };
 

@@ -5,18 +5,21 @@ import { useDispatch } from 'react-redux';
 import { setUserData } from '@/Utils/UserSlice';
 import NavBar from '@/components/NavBar';
 import LoginForm from '@/components/LoginForm';
-import {login_me} from '@/Services/auth';
+import { login_me } from '@/Services/auth';
 import Cookies from 'js-cookie';
 import Router from 'next/router';
 
 export default function Login() {
   const dispatch = useDispatch();
+  const [previousRoute, setPreviousRoute] = useState(null);
+
+  console.log(previousRoute);
 
   useEffect(() => {
     if (Cookies.get('token')) {
-      Router.push('/');
+      Router.push(previousRoute || '/');
     }
-  }, []);
+  }, [previousRoute]);
 
   const handleLogin = async (formData) => {
     try {
@@ -24,10 +27,21 @@ export default function Login() {
       const res = await login_me(formData);
 
       if (res.success) {
-          Cookies.set('token', res?.finalData?.token);
-          localStorage.setItem('user', JSON.stringify(res?.finalData?.user));
-          dispatch(setUserData(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null));
-          Router.push('/');
+        Cookies.set('token', res?.finalData?.token);
+        localStorage.setItem('user', JSON.stringify(res?.finalData?.user));
+        dispatch(
+          setUserData(localStorage.getItem('user')
+            ? JSON.parse(localStorage.getItem('user'))
+            : null
+          )
+        );
+
+        // Check if there's a previous route in the browser's history
+        if (Router.router?.asPath !== Router.asPath) {
+          setPreviousRoute(Router.router?.asPath);
+        } else {
+          Router.push(previousRoute || '/');
+        }
       } else {
         toast.error('Invalid credentials. Please try again.');
       }

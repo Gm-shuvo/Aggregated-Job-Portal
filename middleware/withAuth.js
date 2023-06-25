@@ -3,21 +3,27 @@ import { useEffect } from 'react';
 import { parseCookies } from 'nookies';
 
 import jwtDecode from 'jwt-decode';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
+import { setUserData } from '@/Utils/UserSlice';
 
 export function withAuth(Component) {
   return function WithAuth(props) {
+    const dispatch = useDispatch();
     const router = useRouter();
     const user = useSelector((state) => state.User.userData);
 
     useEffect(() => {
       const { token } = parseCookies(); // Retrieve the JWT token from cookies
-      console.log(token, user)
       // If the JWT token is not present or expired, redirect to the login page
       if (!user?._id ||!token || isTokenExpired(token)) {
-        router.replace('/auth/login');
+        Cookies.remove("token");
+        localStorage.removeItem("user");
+        dispatch(setUserData(null));
+
+        router.push('/auth/login');
       }
-    }, [user, router]);
+    }, [user, router, dispatch]);
 
     return user ? <Component {...props} /> : null;
   };
