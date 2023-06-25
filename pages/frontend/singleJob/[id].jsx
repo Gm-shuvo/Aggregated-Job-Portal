@@ -1,27 +1,24 @@
 import NavBar from "@/components/NavBar";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { GoLocation } from "react-icons/go";
-import { MdCategory, MdEmail, MdOutlineCategory } from "react-icons/md";
+import { MdOutlineCategory } from "react-icons/md";
 import { BsBookmarkCheck } from "react-icons/bs";
 import { SiOpslevel } from "react-icons/si";
-import { AiOutlineArrowRight, AiOutlineDollarCircle } from "react-icons/ai";
-import { RiUserSearchFill } from "react-icons/ri";
-import { BsFillCalendar2DateFill } from "react-icons/bs";
-import { HiOutlineStar } from "react-icons/hi";
-import { FaUserAstronaut } from "react-icons/fa";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { setMatchingJobData } from "@/Utils/JobSlice";
 import { get_specified_job, get_specifiedLinkedin_job } from "@/Services/job";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import useSWR from "swr";
 import { bookMarkJob } from "@/Services/job/bookmark";
 import { Loader } from "@/components/Loader";
 import { SlLocationPin } from "react-icons/sl";
 import { TbBuildingBank } from "react-icons/tb";
 import { PiClockCountdownBold } from "react-icons/pi";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import JobsCard from "@/components/JobsCard";
+import { formatDistanceToNow } from "date-fns";
 
 export default function JobDetails() {
   const router = useRouter();
@@ -29,10 +26,9 @@ export default function JobDetails() {
 
   const { id, s } = router.query;
 
-  //   console.log(router.query);
-
   const [jobData, setJobData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChoose, setIsChoose] = useState("Description");
 
   const allJobData = useSelector((state) => state?.Job?.JobData);
   const matchingData = useSelector((state) => state?.Job?.matchingData);
@@ -43,13 +39,16 @@ export default function JobDetails() {
       setIsLoading(true);
 
       try {
-        if (s === "LinkedIn") {
-          const { data } = await get_specifiedLinkedin_job(id);
-          setJobData(data);
-        } else {
-          const { data } = await get_specified_job(id);
-          setJobData(data);
-        }
+        const { data } =
+          s === "LinkedIn"
+            ? await get_specifiedLinkedin_job(id)
+            : await get_specified_job(id);
+            if (data?.createdAt) {
+              const createdAtDate = new Date(data.createdAt);
+              const formattedDate = formatDistanceToNow(createdAtDate, { addSuffix: true });
+              data.job_date = formattedDate;
+            }
+        setJobData(data);
       } catch (error) {
         console.log("Error fetching job data:", error);
         if (error) toast.error(error);
@@ -61,26 +60,17 @@ export default function JobDetails() {
     fetchData();
   }, [id, s]);
 
-  console.log(jobData);
-  console.log(allJobData);
-
   useEffect(() => {
     if (jobData) {
       const filteredJobData = allJobData?.filter(
-        (job) => job.job_type === jobData?.job_type
+        (job) => job.job_type === jobData?.job_type && job._id !== jobData?._id
       );
 
-      //   const combinedData = [
-      //     ...filteredJobData1,
-      //     ...filteredJobData2,
-      //     ...filteredJobData3,
-      //     ...filteredJobData4,
-      //   ];
       dispatch(setMatchingJobData(filteredJobData));
     }
-  }, [jobData, allJobData]);
+  }, [jobData, allJobData, dispatch]);
 
-  console.log(matchingData);
+  console.log("Job Data:", jobData);
 
   const handleApply = () => {
     if (!user) return toast.error("Please Login First");
@@ -99,67 +89,116 @@ export default function JobDetails() {
     }
   };
 
+  
   return (
     <>
-      <NavBar />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <NavBar />
 
-      <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-        {jobData && (
-          <div className="mb-10 border-b-2 border-gray-400">
-            <div className="flex justify-between items-center">
-              <h1 className="text-lg sm:text-xl md:text-2xl max-w-[400px] font-semibold text-gray-800">
-                {jobData?.job_title}
-              </h1>
+          <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+            {jobData && (
+              <>
+              <div className="">
+                <div className="flex justify-between items-center ">
+                  <h1 className="text-lg sm:text-xl md:text-2xl max-w-[400px] font-semibold text-gray-800">
+                    {jobData?.job_title}
+                  </h1>
 
-              <div className="flex items-start mt-[12px] space-x-3">
-                <button
-                  onClick={handleBookmark}
-                  className=" text-gray-500 focus:outline-none "
-                >
-                  <BsBookmarkCheck
-                    size={40}
-                    className="text-start hover:text-indigo-600"
-                  />
-                </button>
-                <button
-                  onClick={handleBookmark}
-                  className="text-white bg-indigo-500 font-semibold border px-4 py-2 rounded focus:outline-none"
-                >
-                  <span>Apply Now</span>
-                </button>
-              </div>
-            </div>
+                  <div className="flex items-start   space-x-3">
+                    <button
+                      onClick={handleBookmark}
+                      className="text-gray-500 focus:outline-none "
+                    >
+                      <BsBookmarkCheck
+                        size={40}
+                        className="text-start hover:text-indigo-600"
+                      />
+                    </button>
+                    <button
+                      onClick={handleBookmark}
+                      className="text-white bg-indigo-500 font-semibold border px-4 py-2 rounded focus:outline-none"
+                    >
+                      { s === "LinkedIn" ?
+                        <span>Apply on LinkedIn</span> :
+                        <span>Apply Now</span>
+                      }
+                    </button>
+                  </div>
+                </div>
 
-            <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
-              <div className="flex items-center space-x-2">
-                <TbBuildingBank size={20} />
-                <span>{jobData?.company_name}</span>
-              </div>
+                <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
+                  <div className="flex items-center space-x-2">
+                    <TbBuildingBank size={20} />
+                    <span>{jobData?.company_name}</span>
+                  </div>
 
-              <div className="flex items-center space-x-2">
-                <MdOutlineCategory size={20} />
-                <span>{jobData?.job_type}</span>
-              </div>
+                  <div className="flex items-center space-x-2">
+                    <MdOutlineCategory size={20} />
+                    <span>{jobData?.job_type}</span>
+                  </div>
 
-              <div className="flex items-center space-x-2">
-                <SiOpslevel size={20} />
-                <span>{jobData?.job_level}</span>
+                  <div className="flex items-center space-x-2">
+                    <SiOpslevel size={20} />
+                    <span>{jobData?.job_level}</span>
+                  </div>
+                </div>
+                <div className="flex gap-4 items-center ">
+                  <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
+                    <SlLocationPin size={20} />
+                    <span>{jobData?.job_location}</span>
+                  </div>
+                  <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
+                    <PiClockCountdownBold size={20} />
+                    <span>{jobData?.job_date}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 border-b-2 border-gray-400 py-4 cursor-pointer font-medium">
+                  <h4
+                    onClick={() => {
+                      setIsChoose("Description");
+                    }}
+                  >
+                    Description
+                  </h4>
+                  <h4
+                    onClick={() => {
+                      setIsChoose("Reviews");
+                    }}
+                  >
+                    Reviews
+                  </h4>
+                </div>
+                {isChoose === "Description" ? (
+                  <div className="mb-6 text-base md:text-lg flex mx-auto mt-5">
+                    <div className="whitespace-pre-wrap">
+                    <ReactMarkdown>{jobData?.job_description}</ReactMarkdown>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mb-6 text-gray-500 text-base md:text-lg flex mx-auto mt-5">
+                    <p className="mb-4">No Reviews</p>
+                  </div>
+                )}
+
               </div>
-            </div>
-            <div className="flex gap-4 items-center ">
-              <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
-                <SlLocationPin size={20} />
-                <span>{jobData?.job_location}</span>
+              <div className="mt-10">
+                <h2 className="text-lg md:text-xl font-semibold border-b-2 py-4">Related Jobs...</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                  {matchingData?.map((job) => (
+                    <JobsCard border ={2} key={job.id} job={job} />
+
+                  ))}
+                </div>
               </div>
-              <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
-                <PiClockCountdownBold size={20} />
-                <span>{jobData?.job_date}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
-      <ToastContainer />
+              </>
+            )}
+          </section>
+          <ToastContainer />
+        </>
+      )}
     </>
   );
 }

@@ -5,10 +5,10 @@ import {SlLocationPin} from 'react-icons/sl'
 import {PiClockCountdownBold} from 'react-icons/pi'
 import { MdOutlineCategory } from 'react-icons/md';
 import { SiOpslevel } from 'react-icons/si';
-const JobsCard = ({ job }) => {
-//   console.log(job)
+const JobsCard = ({ job, border }) => {
+  // console.log()
   const { job_title, company_name, job_description, job_location, job_date, job_type, job_level,source} = job;
-  console.log(job.source);
+  console.log(job);
   const router = useRouter();
 
   const handleCardClick = () => {
@@ -18,7 +18,7 @@ const JobsCard = ({ job }) => {
   return (
     <div
       key={job._id}
-      className="group w-full p-4 cursor-pointer transition-all duration-600 border-none shadow-gray-400 hover:shadow-lg rounded-md"
+      className={`group w-full p-4 cursor-pointer transition-all duration-600 border-${border} shadow-gray-400 hover:shadow-lg rounded-md`}
       onClick={handleCardClick}
     >
       <div className="flex justify-center space-y-1 flex-col">

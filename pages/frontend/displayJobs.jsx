@@ -17,11 +17,12 @@ export default function DisplayJobs() {
   const jobList = useSelector((state) => state?.Job?.JobData) || [];
 
   console.log(jobList)
+  console.log(loading, error)
 
   return (
     <>
       <NavBar />
-      {loading || error ? (
+      {loading || error? (
         <Loader />
       ) : (
         <div className="w-full py-20 flex items-center md:px-8 px-2 justify-center flex-col">
