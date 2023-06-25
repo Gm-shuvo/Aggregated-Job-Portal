@@ -1,23 +1,25 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { parseCookies,  } from 'nookies';
+import { parseCookies } from 'nookies';
 
 import jwtDecode from 'jwt-decode';
+import { useSelector } from 'react-redux';
 
 export function withAuth(Component) {
   return function WithAuth(props) {
     const router = useRouter();
+    const user = useSelector((state) => state.User.userData);
 
     useEffect(() => {
       const { token } = parseCookies(); // Retrieve the JWT token from cookies
-      console.log(token)
+      console.log(token, user)
       // If the JWT token is not present or expired, redirect to the login page
-      if (!token || isTokenExpired(token)) {
-        router.push('/auth/login');
+      if (!user?._id ||!token || isTokenExpired(token)) {
+        router.replace('/auth/login');
       }
-    }, []);
+    }, [user, router]);
 
-    return <Component {...props} />;
+    return user ? <Component {...props} /> : null;
   };
 }
 

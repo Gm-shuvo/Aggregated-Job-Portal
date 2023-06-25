@@ -5,17 +5,12 @@ import { get_application_details } from '@/Services/job';
 import { InfinitySpin } from 'react-loader-spinner';
 import NavBar from '@/components/NavBar';
 import { toast } from 'react-toastify';
-import Cookies from 'js-cookie';
 import { useSelector } from 'react-redux';
+import { withAuth } from '@/middleware/withAuth';
 
 
 
-
-
-
-
-
-export default function ApplicationsDetail() {
+function ApplicationsDetail() {
     
     const router = useRouter();
     const { id } = router.query;
@@ -23,11 +18,7 @@ export default function ApplicationsDetail() {
     const user = useSelector(state => state?.User?.userData)
     const userId = user?._id
 
-    useEffect(() => {
-        if (!userId || !Cookies.get('token')) {
-            router.push('/auth/login')
-        }
-    }, [user, userId, Cookies])
+    
 
     const { data, error, isLoading } = useSWR('/get-application-details', () => get_application_details(id))
 
@@ -67,10 +58,11 @@ export default function ApplicationsDetail() {
                             </div>
                         </div>
                        
-
                     </>
                 )
             }
         </>
     )
 }
+
+export default withAuth(ApplicationsDetail)

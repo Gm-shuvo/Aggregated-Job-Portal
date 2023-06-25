@@ -9,6 +9,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import useSWR from "swr";
+import { withAuth } from "@/middleware/withAuth";
 
 function PostedJobs() {
   const router = useRouter();
@@ -20,13 +21,10 @@ function PostedJobs() {
   console.log(myJobs)
 
   useEffect(() => {
-    if (!id || !Cookies.get("token")) {
-      router.push("/auth/login");
-    }
     if(user?.type === 'candidate'){
       roture.push("/");
     }
-  }, [user, id, router]);
+  }, [user,router]);
 
   const { data, error, isValidating } = useSWR("/getMyPostedJobs", () =>
     get_my_posted_job(id)
@@ -65,4 +63,4 @@ function PostedJobs() {
   );
 }
 
-export default PostedJobs;
+export default withAuth(PostedJobs);

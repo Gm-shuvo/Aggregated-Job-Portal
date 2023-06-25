@@ -5,8 +5,9 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { withAuth } from '@/middleware/withAuth';
 
-export default function ApplyJob() {
+function ApplyJob() {
     const router = useRouter()
     const dispatch = useDispatch();
     const { id } = router.query
@@ -15,6 +16,12 @@ export default function ApplyJob() {
     const [file, setFile] = useState(null)
     const [error, setError] = useState({ name: '', email: "", about: '', job: '', user: '', cv: '' });
 
+    useEffect(() => {
+        if (activeUser?.type === 'recruiter') {
+            router.push('/')
+        }
+    }, [activeUser, router])
+    
 
     const { name, email, about, job, user } = formikData;
 
@@ -86,7 +93,6 @@ export default function ApplyJob() {
     }
 
     
-
     return (
         <>
             <NavBar />
@@ -129,3 +135,5 @@ export default function ApplyJob() {
         </>
     )
 }
+
+export default withAuth(ApplyJob)

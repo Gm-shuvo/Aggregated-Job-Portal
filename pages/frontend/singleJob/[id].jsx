@@ -19,8 +19,9 @@ import { PiClockCountdownBold } from "react-icons/pi";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import JobsCard from "@/components/JobsCard";
 import { formatDistanceToNow } from "date-fns";
+import {withAuth} from "@/middleware/withAuth";
 
-export default function JobDetails() {
+function JobDetails() {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -202,3 +203,5 @@ export default function JobDetails() {
     </>
   );
 }
+
+export default withAuth(JobDetails);

@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { post_job } from "@/Services/job";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { withAuth } from "@/middleware/withAuth";
 
 const options = [
   { value: "Full-time", label: "Full-time" },
@@ -38,9 +39,6 @@ function PostAJob() {
   
 
   useEffect(() => {
-    if (!user?._id || !Cookies.get("token")) {
-      router.replace("/auth/login");
-    }
     if (user?.type === "candidate") {
       router.push("/");
     }
@@ -286,4 +284,4 @@ function PostAJob() {
   );
 }
 
-export default PostAJob;
+export default withAuth(PostAJob);

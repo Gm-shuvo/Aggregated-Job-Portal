@@ -8,8 +8,9 @@ import { InfinitySpin } from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import useSWR from 'swr'
+import { withAuth } from '@/middleware/withAuth';
 
-export default function PostedJobsDetails() {
+function PostedJobsDetails() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const { id } = router.query;
@@ -18,12 +19,6 @@ export default function PostedJobsDetails() {
 
     const [application, setApplication] = useState([]);
 
-
-    useEffect(() => {
-        if (!userId || !Cookies.get('token')) {
-            router.push('/auth/login')
-        }
-    }, [user, userId, Cookies])
 
     const { data, error , isLoading } = useSWR(`/get-all-Application`, () => get_all_applications(id));
     
@@ -62,3 +57,5 @@ export default function PostedJobsDetails() {
         </>
     )
 }
+
+export default withAuth(PostedJobsDetails)

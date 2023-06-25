@@ -1,10 +1,10 @@
 import AppliedJobDataTable from '@/components/AppliedJobDataTable'
 import NavBar from '@/components/NavBar'
 import SavedJobDataTable from '@/components/SavedJobDataTable'
+import { withAuth } from '@/middleware/withAuth'
 import { get_my_applied_job } from '@/Services/job'
 import { get_book_mark_job } from '@/Services/job/bookmark'
 import { setAppliedJob, setBookMark } from '@/Utils/AppliedJobSlice'
-import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { BsFillBookmarkStarFill } from 'react-icons/bs'
@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 
 
-export default function Dashboard() {
+function Dashboard() {
   const [showTable, setShowTable] = useState('appliedJobs')
   const [loading , setLoading] = useState(true)
   const router = useRouter();
@@ -25,14 +25,12 @@ export default function Dashboard() {
   const id = activeUser?._id
 
   useEffect(() => {
-    if (!id || !Cookies.get('token')) {
-      router.push('/auth/login')
+    if (activeUser?.type === 'recruiter') {
+      router.push('/')
     }
-  }, [activeUser, id, Cookies])
+  }, [activeUser, router])
 
   
-
-
   useEffect(() => {
     fetchAppliedJobs()
   }, [])
@@ -100,3 +98,5 @@ export default function Dashboard() {
     </>
   )
 }
+
+export default withAuth(Dashboard)
