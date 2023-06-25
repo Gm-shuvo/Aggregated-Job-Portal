@@ -13,7 +13,7 @@ export const jobSlice = createSlice({
     setJobData : (state, action) => {
         state.JobData = action.payload
     },
-    setMatchingJobDat : (state , action) => {
+    setMatchingJobData : (state , action) => {
       state.matchingData = action.payload
     },
     setMyJobs : (state , action) => {
@@ -23,6 +23,6 @@ export const jobSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setJobData , setMatchingJobDat , setMyJobs } = jobSlice.actions
+export const { setJobData , setMatchingJobData , setMyJobs } = jobSlice.actions
 
 export const JobReducer =  jobSlice.reducer

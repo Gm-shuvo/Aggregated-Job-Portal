@@ -3,14 +3,16 @@ import { useRouter } from 'next/router';
 import {TbBuildingBank} from 'react-icons/tb'
 import {SlLocationPin} from 'react-icons/sl'
 import {PiClockCountdownBold} from 'react-icons/pi'
+import { MdOutlineCategory } from 'react-icons/md';
+import { SiOpslevel } from 'react-icons/si';
 const JobsCard = ({ job }) => {
 //   console.log(job)
-  const { job_title, company_name, job_description, job_location, job_date, job_type, job_level} = job;
-  console.log(job);
+  const { job_title, company_name, job_description, job_location, job_date, job_type, job_level,source} = job;
+  console.log(job.source);
   const router = useRouter();
 
   const handleCardClick = () => {
-    router.push(`/frontend/singleJob/${job._id}`);
+    router.push(`/frontend/singleJob/${job._id}?s=${source}`);
   };
 
   return (
@@ -40,12 +42,12 @@ const JobsCard = ({ job }) => {
         </div>
             <div className="flex items-center space-x-4 ">
                 {job_type && <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
-                    <PiClockCountdownBold className=''/>
+                    <MdOutlineCategory className=''/>
                     <span className=''>{job_type}</span>
                 </div>}
 
                 {job_level && <div className="flex items-center space-x-1 text-xs text-gray-600 md:text-sm">
-                    <PiClockCountdownBold className=''/>
+                    <SiOpslevel className=''/>
                     <span className=''>{job_level}</span>
                 </div>}
             </div>

@@ -1,249 +1,165 @@
-import NavBar from '@/components/NavBar'
-import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import { GoLocation } from 'react-icons/go'
-import { MdCategory, MdEmail } from 'react-icons/md'
-import { BsBriefcaseFill, BsFillBookmarkCheckFill } from 'react-icons/bs'
-import { AiOutlineArrowRight, AiOutlineDollarCircle } from 'react-icons/ai'
-import { RiUserSearchFill } from 'react-icons/ri'
-import { BsFillCalendar2DateFill } from 'react-icons/bs'
-import { HiOutlineStar } from 'react-icons/hi'
-import { FaUserAstronaut } from 'react-icons/fa'
-import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
-import { setMatchingJobDat } from '@/Utils/JobSlice'
-import { get_specified_job } from '@/Services/job'
-import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
-import { InfinitySpin } from 'react-loader-spinner'
-import useSWR from 'swr'
-import { book_mark_job } from '@/Services/job/bookmark'
-import { Loader } from '@/components/Loader'
-
-
-
+import NavBar from "@/components/NavBar";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { GoLocation } from "react-icons/go";
+import { MdCategory, MdEmail, MdOutlineCategory } from "react-icons/md";
+import { BsBookmarkCheck } from "react-icons/bs";
+import { SiOpslevel } from "react-icons/si";
+import { AiOutlineArrowRight, AiOutlineDollarCircle } from "react-icons/ai";
+import { RiUserSearchFill } from "react-icons/ri";
+import { BsFillCalendar2DateFill } from "react-icons/bs";
+import { HiOutlineStar } from "react-icons/hi";
+import { FaUserAstronaut } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { setMatchingJobData } from "@/Utils/JobSlice";
+import { get_specified_job, get_specifiedLinkedin_job } from "@/Services/job";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import useSWR from "swr";
+import { bookMarkJob } from "@/Services/job/bookmark";
+import { Loader } from "@/components/Loader";
+import { SlLocationPin } from "react-icons/sl";
+import { TbBuildingBank } from "react-icons/tb";
+import { PiClockCountdownBold } from "react-icons/pi";
 
 export default function JobDetails() {
-    const router = useRouter()
-    const dispatch = useDispatch();
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-    const { id } = router.query
-    
-    const JobData = useSelector(state => state?.Job?.JobData)
-    const machingData = useSelector(state => state?.Job?.matchingData)
-    const user = useSelector(state => state?.User?.userData)
-  
-    const [JobDetails, setJobDetails] = useState(null);
+  const { id, s } = router.query;
 
+  //   console.log(router.query);
 
-    const { data: jobData, error: err1 , isLoading: isLoad1 } = useSWR(`/get-specified-job?id`, () => get_specified_job(id));
-    
-    
-    const { data: linkedInJob , error: err2 , isLoading: isLoad2 } = useSWR(`/get-specified-job?id`, () => get_specified_job(id));
-    
+  const [jobData, setJobData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-    console.log("jobData ==>", jobData)
-    console.log("linkedInJob ==>", linkedInJob)
+  const allJobData = useSelector((state) => state?.Job?.JobData);
+  const matchingData = useSelector((state) => state?.Job?.matchingData);
+  const user = useSelector((state) => state?.User?.userData);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
 
+      try {
+        if (s === "LinkedIn") {
+          const { data } = await get_specifiedLinkedin_job(id);
+          setJobData(data);
+        } else {
+          const { data } = await get_specified_job(id);
+          setJobData(data);
+        }
+      } catch (error) {
+        console.log("Error fetching job data:", error);
+        if (error) toast.error(error);
+      }
 
-    // useEffect(() => {
-    //     console.log(data)
-    //     if(data && !isLoading) setJobDetails(data?.data)
-    // }, [data, isLoading])
+      setIsLoading(false);
+    };
 
-    
-    if(error) toast.error(error)
+    fetchData();
+  }, [id, s]);
 
+  console.log(jobData);
+  console.log(allJobData);
 
-    // useEffect(() => {
-    //     if (JobDetails) {
-    //         const filteredJobData = JobData?.filter((job) => job.job_category === JobDetails?.job_category)
-    //         const filteredJobData2 = filteredJobData?.filter((job) => job._id !== JobDetails?._id)
-    //         dispatch(setMatchingJobDat(filteredJobData2))
-    //     }
-    // }, [JobDetails, JobData, dispatch])
-    
-    
-    // const handleApply = () => {
-    //     if (!user) return toast.error('Please Login First');
-    //     router.push(`/frontend/applyJob/${id}`)
-    // }
+  useEffect(() => {
+    if (jobData) {
+      const filteredJobData = allJobData?.filter(
+        (job) => job.job_type === jobData?.job_type
+      );
 
+      //   const combinedData = [
+      //     ...filteredJobData1,
+      //     ...filteredJobData2,
+      //     ...filteredJobData3,
+      //     ...filteredJobData4,
+      //   ];
+      dispatch(setMatchingJobData(filteredJobData));
+    }
+  }, [jobData, allJobData]);
 
-    // const handleBookMark = async () =>  {
+  console.log(matchingData);
 
-    //     if (!user) return toast.error('Please Login First');
+  const handleApply = () => {
+    if (!user) return toast.error("Please Login First");
+    // Handle apply logic here
+  };
 
-    //     const data = {user : user?._id , job : JobDetails?._id}
-    //     const res = await book_mark_job(data);
-    //     if(res.success) {
-    //        return toast.success(res.message)
-    //     }
-    //     else {
-    //         return toast.error(res.message)
-    //     }
+  const handleBookmark = async () => {
+    if (!user) return toast.error("Please Login First");
 
-    // }
+    try {
+      await bookMarkJob(id);
+      toast.success("Job bookmarked successfully");
+    } catch (error) {
+      console.log("Error bookmarking job:", error);
+      if (error) toast.error(error);
+    }
+  };
 
-    return (
-        <>
-            {
-                flase ? (
-                    <Loader/>
-                ) : (
-                    <>
-                        <ToastContainer />
-                        <NavBar />
-                        <div className='w-full  py-20 flex items-center md:px-8 px-2  justify-center flex-col  '>
-                            <div className='w-full h-40 bg-gray-50 text-indigo-600 font-bold flex items-center justify-center flex-col'>
-                               {/* <Image width={200} height={200} src='/public/jobportal_banner.jpg' alt='Banner' className='bg-cover' /> */}
-                            </div>
-                            <div className='flex items-center  justify-center w-full py-10'>
-                                <div className='flex w-full px-8 md:px-20 items-start md:flex-row flex-col md:justify-between justify-center'>
-                                    <div className='flex mb-1 items-center justify-center'>
-                                        <Image src={"https://xsgames.co/randomusers/avatar.php?g=male"} alt="no-image" className='rounded-full mb-2' width={100} height={100} />
-                                        <div className='px-4 mx-2 flex flex-col items-start justify-center'>
-                                            <p className='font-semibold text-base mb-1' >{JobDetails?.title} </p>
-                                            <p className=' text-sm text-gray-800 mb-1'>{JobDetails?.company}</p>
-                                        </div>
+  return (
+    <>
+      <NavBar />
 
-                                    </div>
-                                    <div className='md:px-4 mb-1 px-2 md:mx-2 flex flex-col items-start justify-center'>
-                                        <div className='flex items-center justify-center mb-1'>
-                                            <FaUserAstronaut className='text-xs font-semibold text-indigo-600' />
-                                            <p className='font-semibold text-base mx-1'>Job Poster </p>
-                                            <p className=' text-sm text-gray-800 mx-1'>{JobDetails?.user?.name}</p>
-                                        </div>
-                                        <div className='flex items-center justify-center mb-1'>
-                                            <MdEmail className='text-xs font-semibold text-indigo-600' />
-                                            <p className='font-semibold text-base mx-1'>Email </p>
-                                            <p className=' text-sm text-gray-800 mx-1'>{JobDetails?.user?.email}</p>
-                                        </div>
-                                    </div>
-                                    <div className='md:px-4 mb-1 px-2 md:mx-2 flex flex-col items-start justify-center'>
-                                        <div className='flex items-center justify-center mb-1'>
-                                            <GoLocation className='text-xs font-semibold text-indigo-600' />
-                                            <p className='font-semibold text-base mx-1'>Location </p>
-                                            <p className=' text-sm text-gray-800 mx-1'>Rawalipindi</p>
-                                        </div>
-                                        <div className='flex items-center justify-center mb-1'>
-                                            <MdCategory className='text-xs font-semibold text-indigo-600' />
-                                            <p className='font-semibold text-base mx-1'>Category </p>
-                                            <p className=' text-sm text-gray-800 mx-1'>{JobDetails?.job_category}</p>
-                                        </div>
-                                    </div>
-                                    <div className='md:px-4 mb-1 px-2 md:mx-2 flex flex-col items-start justify-center'>
-                                        <div className='flex items-center justify-center mb-1'>
-                                            <BsBriefcaseFill className='text-xs font-semibold text-indigo-600' />
-                                            <p className='font-semibold text-base mx-1'>Job Type </p>
-                                            <p className='text-sm text-gray-800 mx-1'>{JobDetails?.job_type}</p>
-                                        </div>
-                                        <div className='flex items-center justify-center mb-1'>
-                                            <AiOutlineDollarCircle className='text-xs font-semibold text-indigo-600' />
-                                            <p className='font-semibold text-base mx-1'>Salary </p>
-                                            <p className=' text-sm text-gray-800 mx-1'>$ {JobDetails?.salary} </p>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center justify-center'>
-                                        {
-                                            JobDetails?.user?.email === user?.email ? (
-                                                <p className='text-xs text-red-500'>unable Apply to your Own jobs</p>
-                                            ) : (
-                                                <div className='flex items-center justify-center  '>
-                                                    <BsFillBookmarkCheckFill onClick={""} className='text-indigo-600 text-4xl cursor-pointer  mx-2'/>
-                                                    <button onClick={""} className='md:px-6 md:py-3 px-3 py-2 mt-2 md:mt-0 bg-indigo-500 rounded text-base tracking-widest uppercase transition-all duration-700 hover:bg-indigo-900 text-white  '>Apply Position</button>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='w-full md:px-4 py-2 flex items-center md:items-start md:flex-row flex-col justify-start md:justify-center'>
-                                <div className='md:w-8/12 w-full md:px-4 py-8 flex flex-col items-center content-start justify-center '>
-                                    <h1 className='text-center lg:text-2xl font-semibold text-xl mb-4 uppercase border-b-2 border-indigo-600 py-2'>Job Description</h1>
-                                    <p className='px-4'>{JobDetails?.description}</p>
-                                </div>
-                                <div className='md:w-4/12 w-full py-8 px-4 md:px-10'>
-                                    <h1 className=' text-2xl font-semibold mb-2'>Job Summary</h1>
-                                    <div className='flex items-center justify-start mb-3'>
-                                        <RiUserSearchFill className='text-base font-semibold text-indigo-600' />
-                                        <p className='font-semibold text-base mx-1'>Total Vacancies </p>
-                                        <p className=' text-sm text-gray-800 mx-1'>{JobDetails?.job_vacancy}</p>
-                                    </div>
-                                    <div className='flex items-center justify-start mb-3'>
-                                        <BsFillCalendar2DateFill className='text-base font-semibold text-indigo-600' />
-                                        <p className='font-semibold text-base mx-1'>Dead Line</p>
-                                        <p className=' text-sm text-gray-800 mx-1'>{new Date(`${JobDetails?.job_deadline}`).toLocaleDateString('en-GB')}</p>
-                                    </div>
-                                    <div className='flex items-center justify-start mb-3'>
-                                        <HiOutlineStar className='text-base font-semibold text-indigo-600' />
-                                        <p className='font-semibold text-base mx-1'>Experience Required</p>
-                                        <p className=' text-sm text-gray-800 mx-1'>{JobDetails?.job_experience}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='w-full px-2 md:px-8 mb-2 flex flex-col'>
-                                <h1 className='text-xl font-semibold lg:text-2xl '>Related Jobs</h1>
-                                <div className='md:px-8 px-2 md:mx-4 flex flex-wrap items-center justify-center'>
-                                    {/* card */}
+      <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+        {jobData && (
+          <div className="mb-10 border-b-2 border-gray-400">
+            <div className="flex justify-between items-center">
+              <h1 className="text-lg sm:text-xl md:text-2xl max-w-[400px] font-semibold text-gray-800">
+                {jobData?.job_title}
+              </h1>
 
-                                    {
-                                        machingData?.length === 0 ? (
-                                            <>
-                                                <div className='md:w-96 w-full py-3 mx-4 my-2 flex items-center md:items-start px-6 justify-start md:justify-center flex-col rounded bg-gray-50'>
-                                                    <p  className='text-xs font-semibold text-red-600 uppercase'>No Other similar Jobs Available ...</p>
-                                                </div>
+              <div className="flex items-start mt-[12px] space-x-3">
+                <button
+                  onClick={handleBookmark}
+                  className=" text-gray-500 focus:outline-none "
+                >
+                  <BsBookmarkCheck
+                    size={40}
+                    className="text-start hover:text-indigo-600"
+                  />
+                </button>
+                <button
+                  onClick={handleBookmark}
+                  className="text-white bg-indigo-500 font-semibold border px-4 py-2 rounded focus:outline-none"
+                >
+                  <span>Apply Now</span>
+                </button>
+              </div>
+            </div>
 
-                                            </> 
-                                        ) : (
-                                        machingData?.map((item) => {
-                                            return (
-                                                <div key={item?._id} className='md:w-96 w-full py-3 mx-4 my-2 flex items-center md:items-start px-6 justify-start md:justify-center flex-col rounded bg-gray-50'>
-                                                    <div className='mb-4 flex px-4 flex-col md:flex-row items-center justify-start py-2 '>
-                                                        <Image width={70} height={70} className="flex rounded-full mb-4 md:mb-0" src={"https://xsgames.co/randomusers/avatar.php?g=male"} alt="no image" />
-                                                        <div className='flex flex-col w-full mx-2 px-2'>
-                                                            <h1 className='text-base md:text-left text-center  md:text-2xl font-semibold'>{item?.title}</h1>
-                                                            <p className='text-xs md:text-left text-center sm:text-sm md:text-base text-gray-800'>{item?.company}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex flex-col px-1 md:px-4 py-6 items-start justify-center'>
-                                                        <div className='flex px-1 md:px-4 items-center justify-start mb-2'>
-                                                            <BsBriefcaseFill className='text-base font-semibold text-indigo-600' />
-                                                            <p className='font-semibold text-xs md:text-base mx-1'>Job Type </p>
-                                                            <p className='text-sm text-gray-800 mx-1'>{item?.job_type}</p>
-                                                        </div>
-                                                        <div className='flex px-1 md:px-4 items-center justify-center mb-2'>
-                                                            <AiOutlineDollarCircle className='text-base font-semibold text-indigo-600' />
-                                                            <p className='font-semibold text-xs md:text-base mx-1'>Salary </p>
-                                                            <p className=' text-sm text-gray-800 mx-1'>{item?.salary}</p>
-                                                        </div>
-                                                        <div className='flex px-1 md:px-4 items-center justify-center mb-2'>
-                                                            <RiUserSearchFill className='text-base font-semibold text-indigo-600' />
-                                                            <p className='font-semibold text-xs md:text-base mx-1'>Total Vacancies </p>
-                                                            <p className=' text-sm text-gray-800 mx-1'>{item?.job_vacancy}</p>
-                                                        </div>
-                                                        <div className='flex px-1 md:px-4 items-center justify-center mb-2'>
-                                                            <BsFillCalendar2DateFill className='text-base font-semibold text-indigo-600' />
-                                                            <p className='font-semibold text-xs md:text-base mx-1'>Dead Line</p>
-                                                            <p className=' text-xs text-gray-800 mx-1'>{new Date(`${item?.job_deadline}`).toLocaleDateString('en-GB')}</p>
-                                                        </div>
-                                                    </div>
-                                                    <button onClick={() => router.push(`/frontend/jobDetails/${item?._id}`)} className='my-2 py-2 px-4  border border-indigo-600 uppercase  rounded flex items-center justify-center transition-all duration-700 hover:bg-indigo-600 hover:text-white text-indigo-600 font-semibold'>View Detail<AiOutlineArrowRight className='mx-2 text-xl' /></button>
-                                                </div>
-                                            )
-                                        })
-                                        )
-                                    }
+            <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
+              <div className="flex items-center space-x-2">
+                <TbBuildingBank size={20} />
+                <span>{jobData?.company_name}</span>
+              </div>
 
-                                    {/* card */}
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )
-            }
+              <div className="flex items-center space-x-2">
+                <MdOutlineCategory size={20} />
+                <span>{jobData?.job_type}</span>
+              </div>
 
-        </>
-    )
+              <div className="flex items-center space-x-2">
+                <SiOpslevel size={20} />
+                <span>{jobData?.job_level}</span>
+              </div>
+            </div>
+            <div className="flex gap-4 items-center ">
+              <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
+                <SlLocationPin size={20} />
+                <span>{jobData?.job_location}</span>
+              </div>
+              <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
+                <PiClockCountdownBold size={20} />
+                <span>{jobData?.job_date}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+      <ToastContainer />
+    </>
+  );
 }

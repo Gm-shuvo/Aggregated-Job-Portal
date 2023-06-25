@@ -6,16 +6,16 @@ const bookMarkSchema = new mongoose.Schema({
 
     user : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
     },
     job : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job',
+        ref: 'job',
     },
 
 
 },{timestamps: true});
 
-const bookMarkJob =  mongoose.models.BookMarkJob || mongoose.model('BookMarkJob', bookMarkSchema);
+const BookMarkJob =  mongoose.models.BookMarkJob || mongoose.model('BookMarkJob', bookMarkSchema);
 
-export default bookMarkJob;
+export default BookMarkJob;

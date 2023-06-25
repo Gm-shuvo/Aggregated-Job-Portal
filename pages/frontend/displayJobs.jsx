@@ -14,14 +14,14 @@ export default function DisplayJobs() {
 
   const {loading, error} = useJobsData();
 
-  const jobList = useSelector((state) => state.Job.JobData) || [];
+  const jobList = useSelector((state) => state?.Job?.JobData) || [];
 
   console.log(jobList)
 
   return (
     <>
       <NavBar />
-      {loading ? (
+      {loading || error ? (
         <Loader />
       ) : (
         <div className="w-full py-20 flex items-center md:px-8 px-2 justify-center flex-col">

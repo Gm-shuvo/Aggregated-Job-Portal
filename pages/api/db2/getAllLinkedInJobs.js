@@ -1,5 +1,6 @@
 // import DbLinkedIn from "@/pages/api/db2/connection";
 import { connectDBJobPortal } from "@/DB/DbJobProtal";
+import { link } from "joi";
 import mongoose from "mongoose";
 
 
@@ -20,9 +21,7 @@ export default async function handler (req, res) {
 const getAllLinkedInJobs = async (req, res) => {
   try {
     
-    const db = mongoose.connection.db;
-    const collect = db.collection('linkedinjobs');
-    const jobData = await collect.find({}).toArray();
+    const jobData = await mongoose.connection.db.collection('linkedinjobs').find({}).toArray();
     
     return res.status(200).json({
       success: true,
