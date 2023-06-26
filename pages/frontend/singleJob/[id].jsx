@@ -8,7 +8,7 @@ import { SiOpslevel } from "react-icons/si";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { setMatchingJobData } from "@/Utils/JobSlice";
-import { get_specified_job, get_specifiedLinkedin_job } from "@/Services/job";
+import { get_specified_job, get_specifiedLinkedin_job, get_related_jobs, get_related_jobs_linkedin } from "@/Services/job";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { bookMarkJob } from "@/Services/job/bookmark";
@@ -27,7 +27,8 @@ function JobDetails() {
 
   const { id, s } = router.query;
 
-  const [jobData, setJobData] = useState(null);
+  const [jobData, setJobData] = useState([]);
+  const [relatedJobs, setRelatedJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isChoose, setIsChoose] = useState("Description");
 
@@ -49,7 +50,24 @@ function JobDetails() {
               const formattedDate = formatDistanceToNow(createdAtDate, { addSuffix: true });
               data.job_date = formattedDate;
             }
+        const [relatedJobs, relatedJobLinkedIn] = await Promise.all([
+          get_related_jobs(data?.job_type, data?.job_level),
+          get_related_jobs_linkedin(data?.job_type, data?.job_level),
+        ]);
+
+        // const relatedJobsData = relatedJobs?.data?.data;
+        // const relatedJobsLinkedInData = relatedJobLinkedIn?.data?.data;
+
+        console.log("Related Jobs:", relatedJobs?.data);
+        console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
+
+        const combineRelatedJobs = [
+          ...relatedJobs?.data,
+          ...relatedJobLinkedIn?.data,
+        ];
+        
         setJobData(data);
+        setRelatedJobs(combineRelatedJobs)
       } catch (error) {
         console.log("Error fetching job data:", error);
         if (error) toast.error(error);
@@ -63,15 +81,16 @@ function JobDetails() {
 
   useEffect(() => {
     if (jobData) {
-      const filteredJobData = allJobData?.filter(
-        (job) => job.job_type === jobData?.job_type && job._id !== jobData?._id
+      const filteredJobData = relatedJobs?.filter(
+        (job) => job._id !== jobData?._id
       );
 
       dispatch(setMatchingJobData(filteredJobData));
     }
-  }, [jobData, allJobData, dispatch]);
+  }, [jobData, allJobData, relatedJobs, dispatch]);
 
   console.log("Job Data:", jobData);
+  console.log("Related Jobs:", relatedJobs);
 
   const handleApply = () => {
     if (!user) return toast.error("Please Login First");

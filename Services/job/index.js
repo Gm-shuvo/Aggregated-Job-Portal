@@ -1,5 +1,5 @@
 
-import Cookies from "js-cookie";
+ import Cookies from "js-cookie";
 
 // post job api
 
@@ -23,35 +23,39 @@ export const post_job = async (formData) => {
 
 
 // get job api
-export const get_job = async () => {
+export const get_job = async (page = 1) => {
+    console.log("page", page);
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/db1/getAllJobs`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        const data = res.json();
-        return data;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/db1/getAllJobs?page=${page}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
-        console.log('error in getting job (service) => ', error);
+      console.log("Error in getting job (service) => ", error);
     }
-}
-
-export const get_linkedin_job = async () => {
+  };
+  
+  //get Linedin job api
+  export const get_linkedin_job = async (page = 1) => {
+    console.log("page", page);
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/db2/getAllLinkedInJobs`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        const data = await res.json();
-        return data;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/db2/getAllLinkedInJobs?page=${page}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
-        console.log('error in getting job (service) => ', error);
+      console.log("Error in getting job (service) => ", error);
     }
-}
+  };
+  
 
 // get specified job api
 export const get_specified_job = async (id) => {
@@ -85,6 +89,47 @@ export const get_specifiedLinkedin_job = async (id) => {
         console.log('error in getting  specified job (service) => ', error);
     }
 }
+
+
+export const get_related_jobs = async (type, level) => {
+
+    console.log("type", type);
+    console.log("level", level);
+    
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getRelatedJobs?t=${type}&l=${level}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('token')}`
+            },
+        })
+        const data =await res.json();
+        return data;
+    } catch (error) {
+        console.log('error in getting  specified job (service) => ', error);
+    }
+}
+
+export const get_related_jobs_linkedin = async (type, level) => {
+    console.log("type", type);
+    console.log("level", level);
+    
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getRelatedJobsLinkedIn?t=${type}&l=${level}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('token')}`
+            },
+        })
+        const data =await res.json();
+        return data;
+    } catch (error) {
+        console.log('error in getting  specified job (service) => ', error);
+    }
+}
+
 
 
 // apply  job api

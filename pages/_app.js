@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import 'react-toastify/dist/ReactToastify.css';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 
 
@@ -13,6 +14,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 })
 {
+  const queryClient = new QueryClient()
   // const router = useRouter();
 
   // useEffect(() => {
@@ -29,8 +31,10 @@ export default function App({
   //   };
   // }, [router]);
   return (
-    <Provider store={store}>
-      <Component {...pageProps} />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <Component {...pageProps} />
+      </Provider>
+    </QueryClientProvider>
   )
 }

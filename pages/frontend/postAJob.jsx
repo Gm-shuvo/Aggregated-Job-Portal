@@ -17,13 +17,15 @@ const options = [
 ];
 
 const optionsLevel = [
-  { value: "Entry", label: "Entry" },
-  { value: "Imtermediate", label: "Imtermediate" },
-  { value: "Senior", label: "Senior" },
+  { value: "Entry level", label: "Entry level" },
+  { value: "Imtermediate level", label: "Imtermediate level" },
+  { value: "Senior level", label: "Senior level" },
 ];
 
 function PostAJob() {
   const user = useSelector((state) => state.User.userData);
+  console.log(user)
+
   const router = useRouter();
   const [formData, setFormData] = useState({
     user: user?._id,
