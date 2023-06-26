@@ -45,11 +45,7 @@ function JobDetails() {
           s === "LinkedIn"
             ? await get_specifiedLinkedin_job(id)
             : await get_specified_job(id);
-            if (data?.createdAt) {
-              const createdAtDate = new Date(data.createdAt);
-              const formattedDate = formatDistanceToNow(createdAtDate, { addSuffix: true });
-              data.job_date = formattedDate;
-            }
+            
         const [relatedJobs, relatedJobLinkedIn] = await Promise.all([
           get_related_jobs(data?.job_type, data?.job_level),
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
@@ -223,4 +219,4 @@ function JobDetails() {
   );
 }
 
-export default withAuth(JobDetails);
+export default JobDetails;

@@ -17,13 +17,7 @@ export default function useJobsData() {
           get_linkedin_job()
         ]);
 
-        const formattedJobData = jobData.data.map(({ createdAt, ...job }) => ({
-          ...job,
-          source: "JobBit",
-          job_date: formatDistanceToNow(new Date(createdAt), {
-            addSuffix: true,
-          }),
-        }));
+        const formattedJobData = jobData.data;
 
         const formattedLinkedInData = linkedInData.data;
 

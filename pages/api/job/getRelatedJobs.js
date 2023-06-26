@@ -1,13 +1,24 @@
 import {connectDBJobPortal} from '@/DB/DbJobProtal';
+import validateToken from '@/middleware/tokenValidation';
 import Job from '@/models/Job';
+import { formatDistanceToNow } from 'date-fns';
+
+export const config = {
+    api: {
+        externalResolver: true,
+        bodyParser: false,
+    },
+};
 
 
-export default async function handler({query, method}, res) {
+export default async function handler(req, res) {
     await connectDBJobPortal();
-    
+    const { method, query } = req;
     switch (method) {
         case 'GET':
-            await getRelatedJobs(query, res);
+            await validateToken(req, res, async () => {
+                await getRelatedJobs(query, res);
+            });
             break;
         default:
             res.status(400).json({ success: false, message: 'Invalid Request' });
@@ -34,6 +45,10 @@ const getRelatedJobs = async (query, res) => {
 
     try {
         const jobs = await Job.find({...filter}).limit(5);
+
+        jobs.forEach(job => {
+            job.job_date = formatDistanceToNow(new Date(job.created_At), { addSuffix: true });
+        });
 
         return res.status(200).json({ success: true, data: jobs, message: 'Related Jobs'})
     } catch (error) {

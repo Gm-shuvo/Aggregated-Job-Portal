@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { formatDistanceToNow } from "date-fns";
 
 const JobSchema = new mongoose.Schema(
   {
@@ -15,9 +16,9 @@ const JobSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    job_level:{
+    job_level: {
       type: String,
-      required:true,
+      required: true,
       trim: true,
     },
     company_name: {
@@ -32,9 +33,22 @@ const JobSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    created_At: {
+      type: Date,
+      default: Date.now,
+    },
+    source: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
+
+// Virtual getter for job_date
+JobSchema.virtual("job_date").get(function () {
+  return formatDistanceToNow(this.created_At, { addSuffix: true });
+});
 
 const Job = mongoose.models.Job || mongoose.model("Job", JobSchema);
 

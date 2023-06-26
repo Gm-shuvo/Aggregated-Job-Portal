@@ -11,17 +11,17 @@ export function withAuth(Component) {
   return function WithAuth(props) {
     const dispatch = useDispatch();
     const router = useRouter();
-    const user = useSelector((state) => state.User.userData);
+    const user = useSelector((state) => state.User?.userData);
 
     useEffect(() => {
       const { token } = parseCookies(); // Retrieve the JWT token from cookies
       // If the JWT token is not present or expired, redirect to the login page
-      if (!user?._id ||!token || isTokenExpired(token)) {
+      if (!token || isTokenExpired(token)) {
         Cookies.remove("token");
         localStorage.removeItem("user");
         dispatch(setUserData(null));
 
-        router.push('/auth/login');
+        router.push('/');
       }
     }, [user, router, dispatch]);
 

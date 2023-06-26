@@ -1,5 +1,7 @@
 import { connectDBJobPortal } from '@/DB/DbJobProtal';
 import Job from '@/models/Job';
+import { formatDistanceToNow } from 'date-fns';
+import { date } from 'joi';
 
 export default async function handler(req, res) {
   await connectDBJobPortal();
@@ -24,6 +26,10 @@ const getAllJobs = async (page, res) => {
     const jobData = await Job.find({})
       .skip(skip)
       .limit(pageSize);
+
+    jobData.forEach(doc => {
+      doc.job_date = formatDistanceToNow(new Date(doc.createdAt), { addSuffix: true });
+    });
 
     return res.status(200).json({
       success: true,

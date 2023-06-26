@@ -1,6 +1,7 @@
 import { connectDBJobPortal } from '@/DB/DbJobProtal';
 import validateToken from '@/middleware/tokenValidation';
 import Job from '@/models/Job';
+import { formatDistanceToNow } from 'date-fns';
 import Joi from 'joi';
 
 const schema = Joi.object({
@@ -27,12 +28,10 @@ export default async function handler(req, res) {
 }
 
 const postAJob = async (req, res) => {
-  
   const data = req.body;
   const userId = req.userId;
   console.log('userId => ', userId);
   const {
-    
     job_title,
     job_type,
     job_level,
@@ -60,16 +59,28 @@ const postAJob = async (req, res) => {
       .json({ success: false, message: error.details[0].message.replace(/['"]+/g, '') });
 
   try {
-    const creatingJob = await Job.create({
-      user: userId.id,
+    // const job_date = formatDistanceToNow(new Date(), { addSuffix: true });
+
+    const source = "JobBit";
+
+    console.log('userId?.id => ', userId?.id);
+    // console.log('job_date => ', job_date);
+    console.log('source => ', source);
+
+    const createdJob = await Job.create({
+      user: userId?.id,
       job_title,
       job_type,
       job_level,
       company_name,
       job_location,
       job_description,
+      source,
     });
-    return res.status(200).json({ success: true, message: 'Job Posted Successfully!' });
+
+    console.log('createdJob => ', createdJob);
+
+    return res.status(200).json({ success: true, message: 'Job Posted Successfully!', data: createdJob });
   } catch (error) {
     console.log('Error in posting a job (server) => ', error);
     return res

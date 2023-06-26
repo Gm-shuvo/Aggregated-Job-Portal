@@ -1,16 +1,20 @@
 import {connectDBJobPortal} from '@/DB/DbJobProtal';
+import validateToken from '@/middleware/tokenValidation';
 import Job from '@/models/Job';
 import User from '@/models/User';
+import { formatDistanceToNow } from 'date-fns';
 // import  User from '@/models/User
 
 
 
-export default async function handler({ method, query }, res) {
+export default async function handler(req, res) {
     await connectDBJobPortal();
-  
+    const { method, query } = req;
     switch (method) {
       case 'GET':
-        await getSpecifiedJob(query, res);
+        await validateToken(req, res, async () => {
+          await getSpecifiedJob(query, res);
+        });
         break;
       default:
         res.status(400).json({ success: false, message: 'Invalid Request' });
@@ -30,6 +34,11 @@ const getSpecifiedJob = async (data, res) => {
     }
     
     const gettingjobs = await Job.findById(id).populate({ path: 'user', select: 'name email', model: User }).exec();
+
+    gettingjobs.forEach(doc => {
+      doc.job_date = formatDistanceToNow(new Date(doc.created_At), { addSuffix: true });
+    });
+
     return res.status(200).json({ success: true, data: gettingjobs });
   } catch (error) {
     console.log('Error in getting a specified Job (server) => ', error);

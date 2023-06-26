@@ -1,13 +1,25 @@
 import {connectDBJobPortal} from '@/DB/DbJobProtal';
+import validateToken from '@/middleware/tokenValidation';
 import mongoose from 'mongoose';
 
 
-export default async function handler({query, method}, res) {
+export const config = {
+    api: {
+        externalResolver: true,
+        bodyParser: false,
+    },
+};
+
+
+export default async function handler(req, res) {
     await connectDBJobPortal();
+    const { method, query } = req;
     
     switch (method) {
         case 'GET':
-            await getRelatedJobs(query, res);
+            await validateToken(req, res, async () => {
+                await getRelatedJobs(query, res);
+            });
             break;
         default:
             res.status(400).json({ success: false, message: 'Invalid Request' });
