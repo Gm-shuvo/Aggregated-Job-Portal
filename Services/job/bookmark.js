@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 
 // bookmark job api
 export const book_mark_job = async (formData) => {
-
+    
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/bookmark`, {
             method: 'POST',

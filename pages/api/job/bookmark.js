@@ -1,8 +1,14 @@
 import {connectDBJobPortal} from '@/DB/DbJobProtal';
 import validateToken from '@/middleware/tokenValidation';
-import bookMarkJob from '@/models/Bookmark';
+import BookMarkJob from '@/models/Bookmark';
 import Joi from 'joi';
 
+export const config = {
+    api: {
+        externalResolver: true,
+        bodyParser: false,
+    },
+};
 
 const schema = Joi.object({
     user: Joi.required(),
@@ -12,10 +18,11 @@ const schema = Joi.object({
 
 export default async function handler (req, res) {
     await connectDBJobPortal();
+
     switch (req.method) {
         case "POST":
             await validateToken(req, res, async () => {
-                await bookmark_my_job(req, res);
+                await bookmark_job(req, res);
             });
             break;
         case "GET":
@@ -35,20 +42,23 @@ export default async function handler (req, res) {
 
 
 
-export const bookmark_my_job = async (req, res) => {
-    await connectDBJobPortal();
-    const data = req.body;
-    const { job, user } = data;
+export const bookmark_job = async (req, res) => {
+    console.log('req.body => ', req.body);
+    const {job_id, user_id} = req.body;
+   
 
-    const { error } = schema.validate({ job, user });
+    console.log('job => ', job_id);
+    console.log('user => ', user_id);
+
+    const { error } = schema.validate({ job_id, user_id });
 
     if (error) return res.status(401).json({ success: false, message: error.details[0].message.replace(/['"]+/g, '') });
 
     try {
-        const checkAlreadyBookMarked = await bookMarkJob.findOne({ job, user })
+        const checkAlreadyBookMarked = await BookMarkJob.findOne({ job_id, user_id })
         if (checkAlreadyBookMarked) return res.status(401).json({ success: false, message: "This Job is Already in Bookmark" })
 
-        const bookmarkingJob = await bookMarkJob.create({ job, user });
+        const bookmarkingJob = await BookMarkJob.create({ job_id, user_id });
         return res.status(200).json({ success: true, message: "Job Bookmarked successfully !" })
     } catch (error) {
         console.log('Error in booking marking a job (server) => ', error);
@@ -62,7 +72,7 @@ export const getBookmark_jobs = async (req, res) => {
 
     if (!userId) return res.status(400).json({ success: false, message: "Please Login" })
     try {
-        const getBookMark = await bookMarkJob.find({ user: userId }).populate('job').populate('user')
+        const getBookMark = await BookMarkJob.find({ user: userId }).populate('job').populate('user')
         return res.status(200).json({ success: true, message: "Job Bookmarked successfully !", data: getBookMark })
     } catch (error) {
         console.log('Error in getting book mark Job (server) => ', error);
@@ -77,7 +87,7 @@ export const delete_bookmark_job = async (req, res) => {
     if (!id) return res.status(400).json({ success: false, message: "Please Login" })
     try {
 
-        const deleteBookmark = await bookMarkJob.findByIdAndDelete(id)
+        const deleteBookmark = await BookMarkJob.findByIdAndDelete(id)
         return res.status(200).json({ success: true, message: "Job removed successfully !" })
     } catch (error) {
         console.log('Error in deleting book mark Job (server) => ', error);

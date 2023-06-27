@@ -59,6 +59,7 @@ export const get_job = async (page = 1) => {
 
 // get specified job api
 export const get_specified_job = async (id) => {
+    console.log("id", id);
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSpecifiedJob?id=${id}`, {
             method: 'GET',
@@ -87,6 +88,7 @@ export const get_specifiedLinkedin_job = async (id) => {
         return data;
     } catch (error) {
         console.log('error in getting  specified job (service) => ', error);
+        throw error;
     }
 }
 
@@ -108,6 +110,7 @@ export const get_related_jobs = async (type, level) => {
         return data;
     } catch (error) {
         console.log('error in getting  specified job (service) => ', error);
+        throw error;
     }
 }
 
@@ -127,6 +130,7 @@ export const get_related_jobs_linkedin = async (type, level) => {
         return data;
     } catch (error) {
         console.log('error in getting  specified job (service) => ', error);
+        throw error;
     }
 }
 
@@ -134,6 +138,7 @@ export const get_related_jobs_linkedin = async (type, level) => {
 
 // apply  job api
 export const apply_job = async (formData) => {
+
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/applyJob`, {
             method: 'POST',

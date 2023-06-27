@@ -3,7 +3,7 @@ import { connection, Types } from 'mongoose';
 
 export default async function handler({ method, query }, res) {
   try {
-    await connectDBJobPortal();
+    
 
     switch (method) {
       case 'GET':
@@ -20,14 +20,19 @@ export default async function handler({ method, query }, res) {
 
 const getSpecifiedJob = async (data, res) => {
   const { id } = data;
-  console.log(id);
+  const _id = new Types.ObjectId(id);
+  if(!_id){
+    return res.status(400).json({ success: false, message: 'Invalid Job ID format' });
+  }
+  console.log(_id);
+  await connectDBJobPortal();
   try {
 
-    if (!id) {
+    if (!_id) {
       return res.status(400).json({ success: false, message: 'Please Login' });
     }
 
-    const jobData = await connection.db.collection('linkedinjobs').findOne({ _id: new Types.ObjectId(id) });
+    const jobData = await connection.db.collection('linkedinjobs').findOne({ _id: _id });
 
     if (!jobData) {
       return res.status(404).json({ success: false, message: 'Job not found' });

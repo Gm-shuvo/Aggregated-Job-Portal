@@ -7,7 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 export default function useJobsData() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const fetchData = async () => {

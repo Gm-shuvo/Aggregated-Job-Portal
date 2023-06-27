@@ -27,13 +27,16 @@ const getAllJobs = async (page, res) => {
       .skip(skip)
       .limit(pageSize);
 
-    jobData.forEach(doc => {
-      doc.job_date = formatDistanceToNow(new Date(doc.createdAt), { addSuffix: true });
+    const formattedJobs = jobData.map((job) => {
+        const formattedJob = job.toObject();
+        formattedJob.job_date = formatDistanceToNow(new Date(job.createdAt), { addSuffix: true });
+        return formattedJob;
     });
-
+    console.log('formattedJobs => ', formattedJobs);
+    
     return res.status(200).json({
       success: true,
-      data: jobData,
+      data: formattedJobs,
       message: 'Jobs Fetched Successfully!',
     });
   } catch (error) {

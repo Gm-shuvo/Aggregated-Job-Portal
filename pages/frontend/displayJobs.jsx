@@ -9,8 +9,6 @@ import { Loader } from "@/components/Loader";
 import useJobsData from "@/hooks/useJobData";
 
 export default function DisplayJobs() {
-  const dispatch = useDispatch();
-  const router = useRouter();
 
   const {loading, error} = useJobsData();
 
@@ -30,8 +28,8 @@ export default function DisplayJobs() {
             Available Jobs
           </h1>
           <div className="w-1/2 h-full gap-6 py-4 flex overflow-y-auto items-center justify-center flex-wrap">
-            {jobList.length > 0 ? (
-              jobList.map((job) => <JobsCard job={job} key={job._id} />)
+            {jobList?.length > 0 ? (
+              jobList?.map((job) => <JobsCard job={job} key={job?._id} />)
             ) : (
               <Empty />
             )}

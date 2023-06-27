@@ -11,7 +11,7 @@ import { setMatchingJobData } from "@/Utils/JobSlice";
 import { get_specified_job, get_specifiedLinkedin_job, get_related_jobs, get_related_jobs_linkedin } from "@/Services/job";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { bookMarkJob } from "@/Services/job/bookmark";
+import { book_mark_job } from "@/Services/job/bookmark";
 import { Loader } from "@/components/Loader";
 import { SlLocationPin } from "react-icons/sl";
 import { TbBuildingBank } from "react-icons/tb";
@@ -27,10 +27,14 @@ function JobDetails() {
 
   const { id, s } = router.query;
 
+  console.log("ID:", id);
+  console.log("Source:", s);
+
   const [jobData, setJobData] = useState([]);
   const [relatedJobs, setRelatedJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isChoose, setIsChoose] = useState("Description");
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const allJobData = useSelector((state) => state?.Job?.JobData);
   const matchingData = useSelector((state) => state?.Job?.matchingData);
@@ -53,7 +57,7 @@ function JobDetails() {
 
         // const relatedJobsData = relatedJobs?.data?.data;
         // const relatedJobsLinkedInData = relatedJobLinkedIn?.data?.data;
-
+        console.log("Job Data:", data);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
 
@@ -72,18 +76,18 @@ function JobDetails() {
       setIsLoading(false);
     };
 
-    fetchData();
+    if (id && s) fetchData();
   }, [id, s]);
 
   useEffect(() => {
     if (jobData) {
       const filteredJobData = relatedJobs?.filter(
-        (job) => job._id !== jobData?._id
+        (job) => job._id !== jobData._id
       );
 
       dispatch(setMatchingJobData(filteredJobData));
     }
-  }, [jobData, allJobData, relatedJobs, dispatch]);
+  }, [jobData, relatedJobs, dispatch]);
 
   console.log("Job Data:", jobData);
   console.log("Related Jobs:", relatedJobs);
@@ -97,13 +101,18 @@ function JobDetails() {
     if (!user) return toast.error("Please Login First");
 
     try {
-      await bookMarkJob(id);
-      toast.success("Job bookmarked successfully");
+      const res = await book_mark_job(id);
+      if(res.ok){
+        toast.success("Job bookmarked successfully");
+        setIsBookmarked(true);
+      }
     } catch (error) {
       console.log("Error bookmarking job:", error);
       if (error) toast.error(error);
     }
   };
+
+  
 
   
   return (
@@ -135,6 +144,7 @@ function JobDetails() {
                     </button>
                     <button
                       onClick={handleBookmark}
+                      disabled={isBookmarked}
                       className="text-white bg-indigo-500 font-semibold border px-4 py-2 rounded focus:outline-none"
                     >
                       { s === "LinkedIn" ?

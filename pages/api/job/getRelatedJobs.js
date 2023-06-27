@@ -46,11 +46,19 @@ const getRelatedJobs = async (query, res) => {
     try {
         const jobs = await Job.find({...filter}).limit(5);
 
-        jobs.forEach(job => {
-            job.job_date = formatDistanceToNow(new Date(job.created_At), { addSuffix: true });
+        if (!jobs) {
+            return res.status(404).json({ success: false, message: 'Jobs not found' });
+        }
+
+        const formattedJobs = jobs.map((job) => {
+            const formattedJob = job.toObject();
+            formattedJob.job_date = formatDistanceToNow(new Date(job.createdAt), { addSuffix: true });
+            return formattedJob;
         });
 
-        return res.status(200).json({ success: true, data: jobs, message: 'Related Jobs'})
+        console.log('formattedJobs => ', formattedJobs);
+
+        return res.status(200).json({ success: true, data: formattedJobs, message: 'Related Jobs'})
     } catch (error) {
         console.log('Error in getting a job (server) => ', error);
         return res.status(500).json({ success: false, message: "Something Went Wrong Please Retry login  !" })
