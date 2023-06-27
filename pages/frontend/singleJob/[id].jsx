@@ -55,8 +55,6 @@ function JobDetails() {
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
         ]);
 
-        // const relatedJobsData = relatedJobs?.data?.data;
-        // const relatedJobsLinkedInData = relatedJobLinkedIn?.data?.data;
         console.log("Job Data:", data);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
@@ -229,4 +227,4 @@ function JobDetails() {
   );
 }
 
-export default JobDetails;
+export default withAuth(JobDetails);

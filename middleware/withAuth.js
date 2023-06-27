@@ -1,11 +1,10 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { parseCookies } from 'nookies';
-
-import jwtDecode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { setUserData } from '@/Utils/UserSlice';
+import jwtDecode from 'jwt-decode';
 
 export function withAuth(Component) {
   return function WithAuth(props) {
@@ -15,15 +14,27 @@ export function withAuth(Component) {
 
     useEffect(() => {
       const { token } = parseCookies(); // Retrieve the JWT token from cookies
-      // If the JWT token is not present or expired, redirect to the login page
-      if (!token || isTokenExpired(token)) {
-        Cookies.remove("token");
-        localStorage.removeItem("user");
-        dispatch(setUserData(null));
 
-        router.push('/');
+      if (!token || isTokenExpired(token)) {
+        handleLogout();
+        return;
       }
-    }, [user, router, dispatch]);
+
+      // Set the user data from localStorage if available
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        dispatch(setUserData(JSON.parse(storedUser)));
+      }
+    }, [router, dispatch]);
+
+    const handleLogout = async () => {
+     
+        Cookies.remove('token');
+        localStorage.removeItem('user');
+        dispatch(setUserData(null));
+        router.push('/auth/login');
+
+    };
 
     return user ? <Component {...props} /> : null;
   };
