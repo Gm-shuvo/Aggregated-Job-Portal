@@ -11,7 +11,7 @@ import { setMatchingJobData } from "@/Utils/JobSlice";
 import { get_specified_job, get_specifiedLinkedin_job, get_related_jobs, get_related_jobs_linkedin } from "@/Services/job";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { book_mark_job } from "@/Services/job/bookmark";
+import { book_mark_job, check_bookmark_job } from "@/Services/job/bookmark";
 import { Loader } from "@/components/Loader";
 import { SlLocationPin } from "react-icons/sl";
 import { TbBuildingBank } from "react-icons/tb";
@@ -40,6 +40,8 @@ function JobDetails() {
   const matchingData = useSelector((state) => state?.Job?.matchingData);
   const user = useSelector((state) => state?.User?.userData);
 
+  console.log('user', user)
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -55,27 +57,51 @@ function JobDetails() {
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
         ]);
 
+
         console.log("Job Data:", data);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
+        
 
         const combineRelatedJobs = [
-          ...relatedJobs?.data,
-          ...relatedJobLinkedIn?.data,
+          ...relatedJobs?.data || [],
+          ...relatedJobLinkedIn?.data || [],
         ];
         
         setJobData(data);
         setRelatedJobs(combineRelatedJobs)
+
       } catch (error) {
         console.log("Error fetching job data:", error);
         if (error) toast.error(error);
       }
 
       setIsLoading(false);
+      // setIsBookmarked(false);
     };
 
     if (id && s) fetchData();
   }, [id, s]);
+
+  useEffect(() => {
+    const check_bookmark = async (id) => {
+    if (!user?._id) return toast.error("Please Login First");
+    if(!id) return toast.error("Job not found");
+    try {
+    const res = await check_bookmark_job(id);
+    console.log("Bookmark job:", res);
+    if (res.status === 200) {
+      setIsBookmarked(true);
+      console.log('Marked')
+    }
+    } catch (error) {
+      console.log("Error checking bookmark:", error);
+      if (error) toast.error(error);
+    }
+  };
+  if (id) check_bookmark(id);
+
+  }, [id]);
 
   useEffect(() => {
     if (jobData) {
@@ -96,14 +122,18 @@ function JobDetails() {
   };
 
   const handleBookmark = async () => {
-    if (!user) return toast.error("Please Login First");
+    if (!user?._id) return toast.error("Please Login First");
+
+    if(!id) return toast.error("Job not found");
 
     try {
       const res = await book_mark_job(id);
-      if(res.ok){
+      // console.log("Bookmark job:", res);
+      if (res.status === 200 ){
         toast.success("Job bookmarked successfully");
         setIsBookmarked(true);
       }
+
     } catch (error) {
       console.log("Error bookmarking job:", error);
       if (error) toast.error(error);
@@ -130,19 +160,20 @@ function JobDetails() {
                     {jobData?.job_title}
                   </h1>
 
-                  <div className="flex items-start   space-x-3">
-                    <button
-                      onClick={handleBookmark}
-                      className="text-gray-500 focus:outline-none "
-                    >
-                      <BsBookmarkCheck
-                        size={40}
-                        className="text-start hover:text-indigo-600"
-                      />
-                    </button>
+                  <div className="flex items-start space-x-3">
                     <button
                       onClick={handleBookmark}
                       disabled={isBookmarked}
+                      className={`${isBookmarked ? "text-indigo-600" : "text-gray-500"} hover:text-indigo-600 focus:outline-none`}
+                    >
+                      <BsBookmarkCheck
+                        size={40}
+                        className="text-center"
+                      />
+                    </button>
+                    <button
+                      onClick={handleApply}
+                      //disabled={isBookmarked}
                       className="text-white bg-indigo-500 font-semibold border px-4 py-2 rounded focus:outline-none"
                     >
                       { s === "LinkedIn" ?

@@ -29,7 +29,12 @@ export default function Home() {
   const token = Cookies.get("token");
 
   useEffect(() => {
+    dispatch(setUserData(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null));
+  }, [dispatch])
+
+  useEffect(() => {
     if (token) {
+      
       dispatch(setUserToken(token));
     } else {
       localStorage.removeItem("user");

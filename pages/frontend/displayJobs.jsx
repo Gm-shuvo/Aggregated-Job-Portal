@@ -20,7 +20,7 @@ export default function DisplayJobs() {
   return (
     <>
       <NavBar />
-      {loading || error? (
+      {loading ? (
         <Loader />
       ) : (
         <div className="w-full py-20 flex items-center md:px-8 px-2 justify-center flex-col">

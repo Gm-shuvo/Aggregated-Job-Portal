@@ -10,7 +10,7 @@ export default async function handler({ method, query }, res) {
 
     switch (method) {
       case 'GET':
-        await getSpecifiedLinkedJob(query, res);
+        await getSpecifiedJob(query, res);
         break;
       default:
         res.status(400).json({ success: false, message: 'Invalid Request' });
@@ -21,7 +21,7 @@ export default async function handler({ method, query }, res) {
   }
 }
 
-const getSpecifiedLinkedJob = async (data, res) => {
+const getSpecifiedJob = async (data, res) => {
   const { id } = data;
   const _id = Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null;
 

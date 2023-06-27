@@ -17,11 +17,19 @@ export default function useJobsData() {
           get_linkedin_job()
         ]);
 
-        const formattedJobData = jobData.data;
+        const formattedJobData = [...jobData?.data] || [];
 
-        const formattedLinkedInData = linkedInData.data;
+        console.log("formattedJobData", formattedJobData);
+
+        // const formattedLinkedInData = linkedInData?.data;
+
+        const formattedLinkedInData = linkedInData?.data || [];
+
+        console.log("formattedLinkedInData", formattedLinkedInData);
 
         const combinedJobs = [...formattedJobData, ...formattedLinkedInData];
+
+        console.log("combinedJobs", combinedJobs);
 
         dispatch(setJobData(combinedJobs));
         setLoading(false);
@@ -32,7 +40,7 @@ export default function useJobsData() {
     };
 
     fetchData();
-  }, [dispatch]);
+  }, []);
 
   return {
     loading,

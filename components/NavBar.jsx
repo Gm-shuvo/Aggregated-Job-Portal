@@ -14,13 +14,8 @@ export default function NavBar() {
     const dispatch = useDispatch();
     const [openJobs, setOpenJobs] = useState(false)
 
-
-    useEffect(() => {
-        dispatch(setUserData(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null));
-    }, [dispatch])
-
     const Router = useRouter();
-    const user = useSelector(state => state.User.userData)
+    const user = useSelector(state => state?.User?.userData)
 
     console.log(user?.type)
 
