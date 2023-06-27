@@ -6,6 +6,8 @@ import { formatDistanceToNow } from 'date-fns';
 
 export default async function handler({ method, query }, res) {
   try {
+    await connectDBJobPortal();
+
     switch (method) {
       case 'GET':
         await getSpecifiedLinkedJob(query, res);
@@ -21,25 +23,28 @@ export default async function handler({ method, query }, res) {
 
 const getSpecifiedLinkedJob = async (data, res) => {
   const { id } = data;
-  const _id = new Types.ObjectId(id);
-  if(!_id){
+  const _id = Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null;
+
+  if (!_id) {
     return res.status(400).json({ success: false, message: 'Invalid Job ID format' });
   }
-  console.log(_id);
-  await connectDBJobPortal();
-  try {
 
-    const jobData = await Job.findById(_id).populate({path: 'user', model: User}).exec();
+  try {
+    const jobData = await Job.findById(_id).populate({ path: 'user', model: User }).exec();
 
     if (!jobData) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
 
-    jobData.job_date = formatDistanceToNow(new Date(jobData.createdAt), { addSuffix: true });
+    const formattedJobDate = formatDistanceToNow(jobData.createdAt, { addSuffix: true });
+    const formattedJob = {
+      ...jobData.toObject(),
+      job_date: formattedJobDate
+    };
 
-    console.log('formattedJob => ', jobData);
+    console.log('formattedJob specificJobs => ', formattedJob);
 
-    return res.status(200).json({ success: true, data: jobData, message: 'Job Fetched Successfully!' });
+    return res.status(200).json({ success: true, data: formattedJob, message: 'Job Fetched Successfully!' });
   } catch (error) {
     console.log('Error in getting a specified Job (server) => ', error);
 

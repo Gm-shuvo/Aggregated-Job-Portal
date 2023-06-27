@@ -2,18 +2,23 @@ import { connectDBJobPortal } from "@/DB/DbJobProtal";
 import mongoose from "mongoose";
 
 export default async function handler(req, res) {
-  await connectDBJobPortal();
-  const { method, query } = req;
-  const { page } = query;
+  try{
+    await connectDBJobPortal();
+    const { method, query } = req;
+    const { page } = query;
 
-  switch (method) {
-    case 'GET':
-        await getAllLinkedInJobs(page, res);
-      break;
-    default:
-      res.status(400).json({ success: false, message: 'Invalid Request' });
-      break;
-  }
+    switch (method) {
+      case 'GET':
+          await getAllLinkedInJobs(page, res);
+        break;
+      default:
+        res.status(400).json({ success: false, message: 'Invalid Request' });
+        break;
+    }
+    } catch (error) {
+      console.log('Error connecting to the database:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
 }
 
 const getAllLinkedInJobs = async (page, res) => {
