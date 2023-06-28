@@ -1,113 +1,116 @@
-import {connectDBJobPortal} from '@/DB/DbJobProtal';
-import Joi from 'joi';
-import AppliedJob from '@/models/ApplyJob';
-import formidable from 'formidable';
-import fs from 'fs';
-import path from 'path'
-import crypto from 'crypto';
-import validateToken from '@/middleware/tokenValidation';
+import { connectDBJobPortal } from "@/DB/DbJobProtal";
+import Joi from "joi";
+import AppliedJob from "@/models/ApplyJob";
+import formidable from "formidable";
+import fs from "fs/promises";
+import path from "path";
+import crypto from "crypto";
+import validateToken from "@/middleware/tokenValidation";
 
 const schema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().email().required(),
-    about: Joi.string().required(),
-    job: Joi.string().required(),
-    user: Joi.string().required(),
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  about: Joi.string().required(),
+  job: Joi.string().required(),
+  user: Joi.string().required(),
 });
 
 export const config = {
-    api: {
-        bodyParser: false,
-    },
+  api: {
+    externalResolver: true,
+    bodyParser: false,
+  },
 };
 
-
 export default async function handler(req, res) {
-    await connectDBJobPortal();
+  try {
+    
     const { method } = req;
     switch (method) {
-        case 'POST':
-            await validateToken(req, res, async () => {
-                await applyToJob(req, res);
-            });
-            break;
-        default:
-            res.status(400).json({ success: false, message: 'Invalid Request' });
+      case "POST":
+        await applyToJob(req, res);
+        break;
+      default:
+        res.status(400).json({ success: false, message: "Invalid Request" });
     }
+  } catch (error) {
+    // console.log("Error in getting a specified Job (server) => ", error);
+    return res.status(403).json({
+      success: false,
+      message: "Something Went Wrong. Please Retry login!",
+    });
+  }
 }
 
-
-
-const applyToJob =  async (req, res) => {
+const applyToJob = async (req, res) => {
+  try {
     await connectDBJobPortal();
+    const form = formidable({ multiples: false });
 
+    form.header = req.headers;
 
-    try {
-        const form = new formidable.IncomingForm();
-        form.parse(req, async (err, fields, files) => {
-            if (err) {
-                console.error('Error', err)
-                throw err
-            }
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        // console.log("Error", err);
+        throw err;
+      }
 
-            const oldPath = files.cv.filepath;
-            const originalFileName  = files.cv.originalFilename
+      // console.log("🚀 ~ file: applyJob.js:61 ~ form.parse ~ fields", fields);
+      // console.log("🚀 ~ file: applyJob.js:61 ~ form.parse ~ files", files);
+
+      const { name: [name], email: [email], about:[about], job: [job], user: [user] } = fields;
+
+      const { error } = schema.validate({ name, email, about, job, user });
+      if (error) {
+        // console.log("Error", error);
+
+        return res.status(401).json({
+          success: false,
+          message: error.details[0].message.replace(/['"]+/g,""),
+          
+        });
+      }
+
+      // console.log("files", files);
+      const cvFile = files.cv[0].filepath;
+      // console.log("cvFile", cvFile);
+      const originalFileName  = files.cv[0].originalFilename
             
+      // console.log("🚀 ~ file: applyJob.js:79 ~ form.parse ~ originalFileName:", originalFileName)
+      const fileExtension = path.extname(originalFileName);
+      // console.log("🚀 ~ file: applyJob.js:81 ~ form.parse ~ fileExtension:", fileExtension)
+      const randomString = crypto.randomBytes(6).toString("hex");
+      // console.log("🚀 ~ file: applyJob.js:83 ~ form.parse ~ randomString:", randomString)
+      const fileName = `${originalFileName.replace(
+        fileExtension,
+        ""
+      )}_${randomString}${fileExtension}`;
+      // console.log("🚀 ~ file: applyJob.js:88 ~ form.parse ~ fileName:", fileName)
+      
 
+      const newPath = path.join(process.cwd(), "public", "uploads", fileName);
 
-            const fileExtension = path.extname(originalFileName);
-            const randomString = crypto.randomBytes(6).toString('hex');
-            const fileName = `${originalFileName.replace(fileExtension, '')}_${randomString}${fileExtension}`;
+      await fs.rename(cvFile, newPath);
 
+      const jobApplication = {
+        name,
+        email,
+        about,
+        job,
+        user,
+        cv: fileName,
+      };
 
-            const newPath = path.join(process.cwd(), 'public', 'uploads', fileName);
+      // console.log("jobApplication", jobApplication);
 
-
-            // Read the file
-            fs.readFile(oldPath, function (err, data) {
-                if (err) throw err;
-                fs.writeFile(newPath, data, function (err) {
-                    if (err) throw err;
-                });
-                fs.unlink(oldPath, function (err) {
-                    if (err) throw err;
-                });
-            });
-
-
-
-
-            const jobApplication = {
-                name: fields.name,
-                email: fields.email,
-                about: fields.about,
-                job: fields.job,
-                user: fields.user,
-                cv: fileName,
-            };
-
-            const {name , email , about , job , user} = jobApplication;
-
-
-            const { error } = schema.validate({name , email , about , job , user});
-            if (error) return res.status(401).json({ success: false, message: error.details[0].message.replace(/['"]+/g, '') });
-
-            const newJobApplication = AppliedJob.create(jobApplication);
-            return res.status(200).json({ success: true, message: 'Job application submitted successfully !' });
-
-
-        })
-    } catch (error) {
-
-        console.log('error in apply job (server) => ', error);
-        return res.status(500).json({ success: false, message: 'something went wrong please retry login !' });
-    }
-
-
-
-
-
-
-
-}
-
+      const newJobApplication = await AppliedJob.create(jobApplication);
+      return res.status(200).json({
+        success: true,
+        message: "Job application submitted successfully!",
+      });
+    });
+  } catch (error) {
+    // console.log("Error in apply job (server) => ", error);
+    
+  }
+};

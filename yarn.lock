@@ -1843,15 +1843,14 @@ form-data@^4.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-formidable@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.npmjs.org/formidable/-/formidable-2.1.1.tgz"
-  integrity sha512-0EcS9wCFEzLvfiks7omJ+SiYJAiD+TzK4Pcw1UlUoGnhUxDcMKjt0P7x8wEb0u6OHu8Nb98WG3nxtlF5C7bvUQ==
+formidable@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/formidable/-/formidable-3.4.0.tgz#8ffc50dabdae819f0e9ea720dfc425f5edca046d"
+  integrity sha512-jVj65eK/bVBpImERgvY64oLf2yP7YKsyGj/u0P25k58G8B1SmpCLmAbh0Gld3J92M7J6oX5H1KnJJM8iDYiUtQ==
   dependencies:
     dezalgo "^1.0.4"
     hexoid "^1.0.0"
     once "^1.4.0"
-    qs "^6.11.0"
 
 fraction.js@^4.2.0:
   version "4.2.0"
@@ -3383,13 +3382,6 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.3.0"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.3.0.tgz"
   integrity sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==
-
-qs@^6.11.0:
-  version "6.11.1"
-  resolved "https://registry.npmjs.org/qs/-/qs-6.11.1.tgz"
-  integrity sha512-0wsrzgTz/kAVIeuxSjnpGC56rzYtr6JT/2BwEvMaPhFIoYa1aGO8LbzuU1R0uUYQkLpWBTOj0l/CLAJB64J6nQ==
-  dependencies:
-    side-channel "^1.0.4"
 
 queue-microtask@^1.2.2:
   version "1.2.3"

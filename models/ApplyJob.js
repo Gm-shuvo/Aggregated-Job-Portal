@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import User from './User';
-import Job from './Job';
 
 const ApplyJobSchema = new mongoose.Schema({
 

@@ -8,7 +8,12 @@ import { SiOpslevel } from "react-icons/si";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { setMatchingJobData } from "@/Utils/JobSlice";
-import { get_specified_job, get_specifiedLinkedin_job, get_related_jobs, get_related_jobs_linkedin } from "@/Services/job";
+import {
+  get_specified_job,
+  get_specifiedLinkedin_job,
+  get_related_jobs,
+  get_related_jobs_linkedin,
+} from "@/Services/job";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { book_mark_job, check_bookmark_job } from "@/Services/job/bookmark";
@@ -19,7 +24,9 @@ import { PiClockCountdownBold } from "react-icons/pi";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import JobsCard from "@/components/JobsCard";
 import { formatDistanceToNow } from "date-fns";
-import {withAuth} from "@/middleware/withAuth";
+import { withAuth } from "@/middleware/withAuth";
+import Link from "next/link";
+import {FiExternalLink} from 'react-icons/fi'
 
 function JobDetails() {
   const router = useRouter();
@@ -40,7 +47,7 @@ function JobDetails() {
   const matchingData = useSelector((state) => state?.Job?.matchingData);
   const user = useSelector((state) => state?.User?.userData);
 
-  console.log('user', user)
+  console.log("user", user);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,26 +58,24 @@ function JobDetails() {
           s === "LinkedIn"
             ? await get_specifiedLinkedin_job(id)
             : await get_specified_job(id);
-            
+
         const [relatedJobs, relatedJobLinkedIn] = await Promise.all([
           get_related_jobs(data?.job_type, data?.job_level),
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
         ]);
 
-
         console.log("Job Data:", data);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
-        
 
         const combineRelatedJobs = [
-          ...relatedJobs?.data || [],
-          ...relatedJobLinkedIn?.data || [],
-        ];
-        
-        setJobData(data);
-        setRelatedJobs(combineRelatedJobs)
+          ...(relatedJobs?.data || []),
+          ...(relatedJobLinkedIn?.data || []),
 
+        ];
+
+        setJobData(data);
+        setRelatedJobs(combineRelatedJobs);
       } catch (error) {
         console.log("Error fetching job data:", error);
         if (error) toast.error(error);
@@ -85,22 +90,21 @@ function JobDetails() {
 
   useEffect(() => {
     const check_bookmark = async (id) => {
-    if (!user?._id) return toast.error("Please Login First");
-    if(!id) return toast.error("Job not found");
-    try {
-    const res = await check_bookmark_job(id);
-    console.log("Bookmark job:", res);
-    if (res.status === 200) {
-      setIsBookmarked(true);
-      console.log('Marked')
-    }
-    } catch (error) {
-      console.log("Error checking bookmark:", error);
-      if (error) toast.error(error);
-    }
-  };
-  if (id) check_bookmark(id);
-
+      if (!user?._id) return toast.error("Please Login First");
+      if (!id) return toast.error("Job not found");
+      try {
+        const res = await check_bookmark_job(id);
+        console.log("Bookmark job:", res);
+        if (res.status === 200) {
+          setIsBookmarked(true);
+          console.log("Marked");
+        }
+      } catch (error) {
+        console.log("Error checking bookmark:", error);
+        if (error) toast.error(error);
+      }
+    };
+    if (id) check_bookmark(id);
   }, [id]);
 
   useEffect(() => {
@@ -113,36 +117,41 @@ function JobDetails() {
     }
   }, [jobData, relatedJobs, dispatch]);
 
+  console.log("All Job Data:", allJobData);
   console.log("Job Data:", jobData);
   console.log("Related Jobs:", relatedJobs);
 
-  const handleApply = () => {
+  const handleApply = (e) => {
+    e.preventDefault();
     if (!user) return toast.error("Please Login First");
     // Handle apply logic here
+    if(s === "LinkedIn"){
+      window.open(jobData?.apply_link, "_blank")
+    }else{
+      router.push(`applyJob/${jobData?._id}`);
+    }
+
   };
 
-  const handleBookmark = async () => {
+  const handleBookmark = async (e) => {
+    e.preventDefault();
     if (!user?._id) return toast.error("Please Login First");
 
-    if(!id) return toast.error("Job not found");
+    if (!id) return toast.error("Job not found");
 
     try {
       const res = await book_mark_job(id);
       // console.log("Bookmark job:", res);
-      if (res.status === 200 ){
+      if (res.status === 200) {
         toast.success("Job bookmarked successfully");
         setIsBookmarked(true);
       }
-
     } catch (error) {
       console.log("Error bookmarking job:", error);
       if (error) toast.error(error);
     }
   };
 
-  
-
-  
   return (
     <>
       {isLoading ? (
@@ -154,100 +163,102 @@ function JobDetails() {
           <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
             {jobData && (
               <>
-              <div className="">
-                <div className="flex justify-between items-center ">
-                  <h1 className="text-lg sm:text-xl md:text-2xl max-w-[400px] font-semibold text-gray-800">
-                    {jobData?.job_title}
-                  </h1>
+                <div className="">
+                  <div className="flex justify-between items-center ">
+                    <h1 className="text-lg sm:text-xl md:text-2xl max-w-[400px] font-semibold text-gray-800">
+                      {jobData?.job_title}
+                    </h1>
 
-                  <div className="flex items-start space-x-3">
-                    <button
-                      onClick={handleBookmark}
-                      disabled={isBookmarked}
-                      className={`${isBookmarked ? "text-indigo-600" : "text-gray-500"} hover:text-indigo-600 focus:outline-none`}
-                    >
-                      <BsBookmarkCheck
-                        size={40}
-                        className="text-center"
-                      />
-                    </button>
-                    <button
-                      onClick={handleApply}
-                      //disabled={isBookmarked}
-                      className="text-white bg-indigo-500 font-semibold border px-4 py-2 rounded focus:outline-none"
-                    >
-                      { s === "LinkedIn" ?
-                        <span>Apply on LinkedIn</span> :
-                        <span>Apply Now</span>
-                      }
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
-                  <div className="flex items-center space-x-2">
-                    <TbBuildingBank size={20} />
-                    <span>{jobData?.company_name}</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <MdOutlineCategory size={20} />
-                    <span>{jobData?.job_type}</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <SiOpslevel size={20} />
-                    <span>{jobData?.job_level}</span>
-                  </div>
-                </div>
-                <div className="flex gap-4 items-center ">
-                  <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
-                    <SlLocationPin size={20} />
-                    <span>{jobData?.job_location}</span>
-                  </div>
-                  <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
-                    <PiClockCountdownBold size={20} />
-                    <span>{jobData?.job_date}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 border-b-2 border-gray-400 py-4 cursor-pointer font-medium">
-                  <h4
-                    onClick={() => {
-                      setIsChoose("Description");
-                    }}
-                  >
-                    Description
-                  </h4>
-                  <h4
-                    onClick={() => {
-                      setIsChoose("Reviews");
-                    }}
-                  >
-                    Reviews
-                  </h4>
-                </div>
-                {isChoose === "Description" ? (
-                  <div className="mb-6 text-base md:text-lg flex mx-auto mt-5">
-                    <div className="whitespace-pre-wrap">
-                    <ReactMarkdown>{jobData?.job_description}</ReactMarkdown>
+                    <div className="flex items-start space-x-3">
+                      <button
+                        onClick={handleBookmark}
+                        disabled={isBookmarked}
+                        className={`${
+                          isBookmarked ? "text-indigo-600" : "text-gray-500"
+                        } hover:text-indigo-600 focus:outline-none`}
+                      >
+                        <BsBookmarkCheck size={40} className="text-center" />
+                      </button>
+                      <button
+                        onClick={handleApply}
+                        disabled={''}
+                        className="group text-white bg-indigo-500 hover: font-semibold border px-4 py-2 rounded focus:outline-none"
+                      >
+                        {s === "LinkedIn" ? (
+                          <span className="flex items-center text-base font-medium gap-2 group:hover:text-black">Apply on LinkedIn   <FiExternalLink/></span>
+                        ) : (
+                          <span>Apply Now</span>
+                        )}
+                      </button>
                     </div>
                   </div>
-                ) : (
-                  <div className="mb-6 text-gray-500 text-base md:text-lg flex mx-auto mt-5">
-                    <p className="mb-4">No Reviews</p>
+
+                  <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
+                    <div className="flex items-center space-x-2">
+                      <TbBuildingBank size={20} />
+                      <span>{jobData?.company_name}</span>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <MdOutlineCategory size={20} />
+                      <span>{jobData?.job_type}</span>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <SiOpslevel size={20} />
+                      <span>{jobData?.job_level}</span>
+                    </div>
                   </div>
-                )}
-
-              </div>
-              <div className="mt-10">
-                <h2 className="text-lg md:text-xl font-semibold border-b-2 py-4">Related Jobs...</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                  {matchingData?.map((job) => (
-                    <JobsCard border ={2} key={job.id} job={job} />
-
-                  ))}
+                  <div className="flex gap-4 items-center ">
+                    <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
+                      <SlLocationPin size={20} />
+                      <span>{jobData?.job_location}</span>
+                    </div>
+                    <div className="flex space-x-2 mb-6 text-xs md:text-sm text-gray-500">
+                      <PiClockCountdownBold size={20} />
+                      <span>{jobData?.job_date}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 border-b-2 border-gray-400 py-4 cursor-pointer font-medium">
+                    <h4
+                      onClick={() => {
+                        setIsChoose("Description");
+                      }}
+                    >
+                      Description
+                    </h4>
+                    <h4
+                      onClick={() => {
+                        setIsChoose("Reviews");
+                      }}
+                    >
+                      Reviews
+                    </h4>
+                  </div>
+                  {isChoose === "Description" ? (
+                    <div className="mb-6 text-base md:text-lg flex mx-auto mt-5">
+                      <div className="whitespace-pre-wrap">
+                        <ReactMarkdown>
+                          {jobData?.job_description}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mb-6 text-gray-500 text-base md:text-lg flex mx-auto mt-5">
+                      <p className="mb-4">No Reviews</p>
+                    </div>
+                  )}
                 </div>
-              </div>
+                <div className="mt-10">
+                  <h2 className="text-lg md:text-xl font-semibold border-b-2 py-4">
+                    Related Jobs...
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                    {matchingData?.map((job) => (
+                      <JobsCard border={2} key={job.id} job={job} />
+                    ))}
+                  </div>
+                </div>
               </>
             )}
           </section>

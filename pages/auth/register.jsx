@@ -17,6 +17,11 @@ export default function  Register (){
     }
   },[router])
 
+  useEffect(() => {
+    // Prefetch the dashboard page
+    router.prefetch('/auth/login')
+  }, [router])
+
 
 
   const [formData, setFormData] = useState({ email: "", password: "", name: "", type: ""});

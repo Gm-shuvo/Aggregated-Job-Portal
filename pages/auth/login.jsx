@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useDispatch } from 'react-redux';
-import { setUserData } from '@/Utils/UserSlice';
-import NavBar from '@/components/NavBar';
-import LoginForm from '@/components/LoginForm';
-import { login_me } from '@/Services/auth';
-import Cookies from 'js-cookie';
-import Router from 'next/router';
+import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { setUserData } from "@/Utils/UserSlice";
+import NavBar from "@/components/NavBar";
+import LoginForm from "@/components/LoginForm";
+import { login_me } from "@/Services/auth";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+
 
 export default function Login() {
   const dispatch = useDispatch();
-  const [previousRoute, setPreviousRoute] = useState(null);
-
-  console.log(previousRoute);
-
+  const router = useRouter();
+  
   useEffect(() => {
-    if (Cookies.get('token')) {
-      Router.push(previousRoute || '/');
+    router.prefetch("/");
+    if (Cookies.get("token")) {
+      router.push("/");
     }
-  }, [previousRoute]);
+  }, [router]);
 
   const handleLogin = async (formData) => {
     try {
@@ -27,34 +27,30 @@ export default function Login() {
       const res = await login_me(formData);
 
       if (res.success) {
-        Cookies.set('token', res?.finalData?.token);
-        localStorage.setItem('user', JSON.stringify(res?.finalData?.user));
+        toast.success("Login successful.");
+        Cookies.set("token", res?.finalData?.token);
+        localStorage.setItem("user", JSON.stringify(res?.finalData?.user));
         dispatch(
-          setUserData(localStorage.getItem('user')
-            ? JSON.parse(localStorage.getItem('user'))
-            : null
+          setUserData(
+            localStorage.getItem("user")
+              ? JSON.parse(localStorage.getItem("user"))
+              : null
           )
         );
-
-        // Check if there's a previous route in the browser's history
-        if (Router.router?.asPath !== Router.asPath) {
-          setPreviousRoute(Router.router?.asPath);
-        } else {
-          Router.push(previousRoute || '/');
-        }
+        router.push("/");
       } else {
-        toast.error('Invalid credentials. Please try again.');
+        toast.error("Invalid credentials. Please try again.");
       }
     } catch (error) {
-      console.error('Error occurred during login:', error);
-      toast.error('An error occurred during login. Please try again later.');
+      console.error("Error occurred during login:", error);
+      toast.error("An error occurred during login. Please try again later.");
     }
   };
 
   return (
     <>
       <NavBar />
-      <div className='w-full h-screen bg-indigo-600'>
+      <div className="w-full h-screen bg-indigo-600">
         <div className="flex flex-col items-center  text-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
           <div className="w-full bg-white text-black rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

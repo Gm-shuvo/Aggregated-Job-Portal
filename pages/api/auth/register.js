@@ -1,7 +1,7 @@
 import { connectDBJobPortal } from "@/DB/DbJobProtal";
 import User from "@/models/User";
 import Joi from "joi";
-import { hash } from "bcryptjs";
+import { hash, genSalt } from "bcryptjs";
 
 const schema = Joi.object({
   email: Joi.string().email().required(),
@@ -31,8 +31,8 @@ export default async function handler(req, res) {
             .status(406)
             .json({ success: false, message: "User Already Exist" });
         } else {
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(password, salt);
+          const salt = await genSalt(10);
+          const hashedPassword = await hash(password, salt);
 
           const createUser = await User.create({
             email,

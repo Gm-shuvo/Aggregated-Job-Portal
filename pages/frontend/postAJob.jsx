@@ -24,7 +24,7 @@ const optionsLevel = [
 
 function PostAJob() {
   const user = useSelector((state) => state.User.userData);
-  console.log(user)
+  console.log(user);
 
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -37,8 +37,6 @@ function PostAJob() {
     job_description: "",
   });
   const [formErrors, setFormErrors] = useState({});
-
-  
 
   useEffect(() => {
     if (user?.type === "candidate") {
@@ -84,10 +82,13 @@ function PostAJob() {
     return !hasErrors;
   }, [formData]);
 
-  
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+      if (!formData.user) {
+        toast.error("Please Login First");
+        return;
+      }
       
       console.log(formData);
 
@@ -99,20 +100,12 @@ function PostAJob() {
             router.push("/frontend/displayJobs");
           }, 1000);
         } else {
-          if(error === 'TokenExpiredError'){
-            Cookies.remove("token");
-            localStorage.removeItem("user");
-            dispatch(setUserData(null));
-
-            router.push('/auth/login');
-          }
+            router.reload();
           toast.error(res.message);
         }
       }
 
-      if (!formData.user) {
-        toast.error("Please Login First");
-      }
+      
     },
     [formData, validateForm, router]
   );
@@ -247,37 +240,40 @@ function PostAJob() {
             )}
           </div>
           <div className="flex items-center justify-between my-2">
-            <Select
-              className="w-full flex flex-col items-start justify-center"
-              defaultValue={defaultValue}
-              value={options.find(
-                (option) => option.value === formData.job_type
+            <div className="flex flex-col gap-2">
+              <Select
+                className="w-full flex flex-col items-start justify-center"
+                defaultValue={defaultValue}
+                value={options.find(
+                  (option) => option.value === formData.job_type
+                )}
+                onChange={handleJobTypeChange}
+                placeholder="Please Select Job type"
+                options={options}
+              />
+              {formErrors.job_type && (
+                <span className="text-sm text-red-500">
+                  {formErrors.job_type}
+                </span>
               )}
-              onChange={handleJobTypeChange}
-              placeholder="Please Select Job type"
-              options={options}
-            />
-            {formErrors.job_type && (
-              <span className="text-sm text-red-500">
-                {formErrors.job_type}
-              </span>
-            )}
-
-            <Select
-              className="w-full flex flex-col items-start justify-center"
-              defaultValue={defaultValueLevel}
-              value={optionsLevel.find(
-                (option) => option.value === formData.job_level
+            </div>
+            <div className="flex flex-col gap-2">
+              <Select
+                className="w-full flex flex-col items-start justify-center"
+                defaultValue={defaultValueLevel}
+                value={optionsLevel.find(
+                  (option) => option.value === formData.job_level
+                )}
+                onChange={handleJobLevelChange}
+                placeholder="Please Select Job Level"
+                options={optionsLevel}
+              />
+              {formErrors.job_level && (
+                <span className="text-sm text-red-500">
+                  {formErrors.job_level}
+                </span>
               )}
-              onChange={handleJobLevelChange}
-              placeholder="Please Select Job Level"
-              options={optionsLevel}
-            />
-            {formErrors.job_level && (
-              <span className="text-sm text-red-500">
-                {formErrors.job_level}
-              </span>
-            )}
+            </div>
           </div>
 
           <button
