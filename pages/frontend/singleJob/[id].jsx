@@ -2,7 +2,7 @@ import NavBar from "@/components/NavBar";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { MdOutlineCategory } from "react-icons/md";
-import { BsBookmarkCheck } from "react-icons/bs";
+import { BsBookmarkCheck, BsCheckCircle } from "react-icons/bs";
 import { SiOpslevel } from "react-icons/si";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -17,15 +17,14 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { book_mark_job, check_bookmark_job } from "@/Services/job/bookmark";
+import { check_apply_job } from "@/Services/job/apply";         
 import { Loader } from "@/components/Loader";
 import { SlLocationPin } from "react-icons/sl";
 import { TbBuildingBank } from "react-icons/tb";
 import { PiClockCountdownBold } from "react-icons/pi";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import JobsCard from "@/components/JobsCard";
-import { formatDistanceToNow } from "date-fns";
 import { withAuth } from "@/middleware/withAuth";
-import Link from "next/link";
 import {FiExternalLink} from 'react-icons/fi'
 
 function JobDetails() {
@@ -42,6 +41,7 @@ function JobDetails() {
   const [isLoading, setIsLoading] = useState(false);
   const [isChoose, setIsChoose] = useState("Description");
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
 
   const allJobData = useSelector((state) => state?.Job?.JobData);
   const matchingData = useSelector((state) => state?.Job?.matchingData);
@@ -88,20 +88,46 @@ function JobDetails() {
     if (id && s) fetchData();
   }, [id, s]);
 
+
+  useEffect(() => {
+    const check_apply = async (id) => {
+      if (!user?._id) return toast.error("Please Login First");
+      if (!id) return toast.error("Job not found");
+      try {
+        const res = await check_apply_job(id);
+        console.log("Apply job:", res.success);
+        if (res.success === true) {
+          setIsApplied(true);
+          console.log("Appled");
+        }
+        else{
+          setIsApplied(false);
+        }
+      } catch (error) {
+        console.log("Error checking checkapply:", error);
+        setIsApplied(false);
+      }
+    };
+    if (id) check_apply(id);
+  }, [id, user?._id]);
+
   useEffect(() => {
     const check_bookmark = async (id) => {
       if (!user?._id) return toast.error("Please Login First");
       if (!id) return toast.error("Job not found");
       try {
         const res = await check_bookmark_job(id);
-        console.log("Bookmark job:", res);
-        if (res.status === 200) {
+        console.log("Bookmark job:", res.success );
+        if (res.success === true) {
           setIsBookmarked(true);
           console.log("Marked");
         }
+        else{
+          setIsBookmarked(false);
+        }
       } catch (error) {
         console.log("Error checking bookmark:", error);
-        if (error) toast.error(error);
+        setIsBookmarked(false);
       }
     };
     if (id) check_bookmark(id);
@@ -148,6 +174,7 @@ function JobDetails() {
       }
     } catch (error) {
       console.log("Error bookmarking job:", error);
+      setIsBookmarked(false);
       if (error) toast.error(error);
     }
   };
@@ -181,13 +208,14 @@ function JobDetails() {
                       </button>
                       <button
                         onClick={handleApply}
-                        disabled={''}
-                        className="group text-white bg-indigo-500 hover: font-semibold border px-4 py-2 rounded focus:outline-none"
-                      >
+                        disabled={isApplied}
+                        className={`px-3 py-2 flex items-center text-base text-white font-semibold text-center bg-indigo-600 hover:bg-indigo-400 border rounded transition-all duration-100 ease-out`}>
                         {s === "LinkedIn" ? (
-                          <span className="flex items-center text-base font-medium gap-2 group:hover:text-black">Apply on LinkedIn   <FiExternalLink/></span>
+                          <span className="flex items-center text-base font-medium gap-2 ">Apply on LinkedIn   <FiExternalLink/></span>
                         ) : (
-                          <span>Apply Now</span>
+                          <span>{isApplied ? (<span className="flex items-center gap-2 text-center text-base font-semibold"> Applied  <BsCheckCircle size={15} className="" />
+                            </span>): "Apply Now"}</span>
+
                         )}
                       </button>
                     </div>

@@ -1,117 +1,131 @@
+import { delete_book_mark_job } from "@/Services/job/bookmark";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import DataTable from "react-data-table-component";
+import { AiFillDelete } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import {  setBookMark } from "@/Utils/AppliedJobSlice";
 
-import { delete_book_mark_job } from '@/Services/job/bookmark';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react'
-import DataTable from 'react-data-table-component';
-import { AiFillDelete } from 'react-icons/ai';
-import { useSelector } from 'react-redux';
-import { toast , ToastContainer } from 'react-toastify';
 
 export default function SavedJobDataTable() {
-    const router = useRouter();
-    const bookMarkJobData = useSelector(state => state.AppliedJob.bookMark)
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const bookMarkJobData = useSelector((state) => state.AppliedJob.bookMark);
 
-    const [Data, setData] = useState([]);
+  const [Data, setData] = useState([]);
 
-    
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
-
-    useEffect(() => {
-        setData(bookMarkJobData)
-    }, [])
-
-    const [search, setSearch] = useState('');
-    const [filteredData, setFilteredData] = useState([]);
-
-    useEffect(() => {
-        setFilteredData(Data);
-    }, [Data])
+  useEffect(() => {
+    setData(bookMarkJobData);
+  }, [bookMarkJobData]);
 
 
+  console.log("🚀 ~ file: SavedJobDataTable.jsx:24 ~ SavedJobDataTable ~ filteredData:", filteredData)
 
-    const columns = [
-        {
-            name: 'Apply Date',
-            selector: row => new Date(`${row?.job?.createdAt}`).toLocaleDateString('en-GB'),
-        },
-        {
-            name: 'Company',
-            selector: row => row?.job?.company,
-        },
-        {
-            name: 'Job title',
-            selector: row => row?.job?.title,
-        },
-        {
-            name: 'Job Salary ',
-            selector: row => '$' + row?.job?.salary,
-        },
-        {
-            name: 'Action',
-            cell: row => <button onClick={() => handleDelete(row?._id)} className='md:px-2 md:py-2 px-1 py-1 text-xl text-red-600 hover:text-white my-2 hover:bg-red-600 border border-red-600   rounded transition-all duration-700  '><AiFillDelete/></button>
-        },
-        {
-            name: '',
-            cell: row => <button onClick={() => router.push(`/frontend/jobDetails/${row?.job?._id}`)} className='md:px-2 md:py-2 px-1 py-1 text-xs text-indigo-600 hover:text-white my-2 hover:bg-indigo-600 border border-indigo-600   rounded transition-all duration-700  '>view Detail</button>,
-        },
-    ];
+  useEffect(() => {
+    setFilteredData(Data);
+  }, [Data]);
 
+  
 
+  const columns = [
+    {
+      name: "Apply Date",
+      selector: (row) =>
+        new Date(`${row?.job?.createdAt}`).toLocaleDateString("en-GB"),
+    },
+    {
+      name: "Company",
+      selector: (row) => row?.job?.company_name,
+    },
+    {
+      name: "Job title",
+      selector: (row) => row?.job?.job_title,
+    },
+    {
+      name: "Job type ",
+      selector: (row) => row?.job?.job_type + " | " + row?.job?.job_level,
+    },
+    {
+      name: "Action",
+      cell: (row) => (
+        <button
+          onClick={() => handleDelete(row?._id)}
+          className="md:px-2 md:py-2 px-1 py-1 text-xl text-red-600 hover:text-white my-2 hover:bg-red-600 border border-red-600   rounded transition-all duration-700  "
+        >
+          <AiFillDelete />
+        </button>
+      ),
+    },
+    {
+      name: "View Detail",
+      cell: (row) => (
+        <button
+          onClick={() => router.push(`/frontend/singleJob/${row?.job?._id}?s=JobBit`)}
+          className="md:px-2 md:py-2 px-1 py-1 text-xs text-indigo-600 hover:text-white my-2 hover:bg-indigo-600 border border-indigo-600   rounded transition-all duration-700  "
+        >
+          view Detail
+        </button>
+      ),
+    },
+  ];
 
-
-    useEffect(() => {
-        if (search === '') {
-            setFilteredData(Data);
-        } else {
-            setFilteredData(Data?.filter((item) => {
-                const itemData = item?.job?.company.toUpperCase();
-                const textData = search.toUpperCase();
-                return itemData.indexOf(textData) > -1;
-            }))
-        }
-
-
-    }, [search, Data])
-
-
-    const handleDelete = async  (id) => {
-        const res =  await delete_book_mark_job(id);
-        if(res.success) {
-           return setFilteredData(filteredData.filter(item => item?._id !== id))
-        }
-        else{
-          return  toast.error(res.message);
-        }
+  useEffect(() => {
+    if (search === "") {
+      setFilteredData(Data);
+    } else {
+      setFilteredData(
+        Data?.filter((item) => {
+          const itemData = item?.job?.company_name.toUpperCase();
+          const textData = search.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        })
+      );
     }
+  }, [search, Data]);
 
+  const handleDelete = async (id) => {
 
-    return (
-        <>
-            
-                        <DataTable
-                            subHeaderAlign={"right"}
-                            columns={columns}
-                            data={filteredData}
-                            keyField="id"
-                            pagination
-                            title={`Total Saved Jobs: ${Data?.length}`}
-                            fixedHeader
-                            fixedHeaderScrollHeight='79%'
-                            selectableRows
-                            selectableRowsHighlight
-                            subHeader
-                            persistTableHead
-                            subHeaderComponent={
-                                <input className='w-60  py-2 px-2  outline-none  border-b-2 border-indigo-600' type={"search"}
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    placeholder={"Search with company name..."} />
-                            }
-                            className="h-screen bg-white"
-                        />
-                   
-                            <ToastContainer/>
-        </>
-    )
+    const res = await delete_book_mark_job(id);
+    if (res.success) {
+      toast.success(res.message);
+      return dispatch(setBookMark(filteredData.filter((item) => item?._id !== id)));
+    } else {
+      return toast.error(res.message);
+    }
+  };
+
+  return (
+    <>
+      <DataTable
+        subHeaderAlign={"right"}
+        columns={columns}
+        data={filteredData}
+        keyField="id"
+        pagination
+        title={`Total Saved Jobs: ${filteredData?.length}`}
+        fixedHeader
+        fixedHeaderScrollHeight="79%"
+        selectableRows
+        selectableRowsHighlight
+        subHeader
+        persistTableHead
+        subHeaderComponent={
+          <input
+            className="w-400 py-2 px-2 outline-none  border-b-2 border-indigo-600"
+            type={"search"}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={"Search with company name..."}
+          />
+        }
+        className="h-screen bg-white"
+      />
+
+      <ToastContainer />
+    </>
+  );
 }
-

@@ -15,7 +15,7 @@ export const post_job = async (formData) => {
         body: JSON.stringify(formData),
       }
     );
-    const data = res.json();
+    const data = await res.json();
     return data;
   } catch (error) {
     console.log("error in post job (service) => ", error);
@@ -163,7 +163,7 @@ export const apply_job = async (formData) => {
         body: formData,
       }
     );
-    const data = await res.json();
+    const data = res.json();
     return data;
   } catch (error) {
     console.log("error in apply job (service) => ", error);
@@ -175,7 +175,7 @@ export const apply_job = async (formData) => {
 export const get_my_applied_job = async (id) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getAppliedJobs?id=${id}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getAppliedJobs`,
       {
         method: "GET",
         headers: {
@@ -274,7 +274,7 @@ export const get_application_details = async (id) => {
     return data;
   } catch (error) {
     console.log(
-      "error in   getting my all application of specified jobs (service) => ",
+      "error in getting my all application of specified jobs (service) => ",
       error
     );
   }

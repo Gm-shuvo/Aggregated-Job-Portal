@@ -3,6 +3,8 @@ import validateToken from "@/middleware/tokenValidation";
 import BookMarkJob from "@/models/Bookmark";
 import Joi from "joi";
 import { Types, isValidObjectId } from "mongoose";
+import Job from "@/models/Job";
+import User from "@/models/User";
 
 export const config = {
   api: {
@@ -20,9 +22,6 @@ export default async function handler(req, res) {
   try {
     await connectDBJobPortal();
 
-    // const jobId = req.body?.jobId;
-
-    // console.log("req.body", jobId);
 
     switch (req.method) {
       case "POST":
@@ -57,7 +56,12 @@ export const bookmark_A_job = async (req, res) => {
   const id = req.body.id;
   const userId = req.userId;
 
-  // console.log("req.body", req)
+  if (!id || !userId?.id) {
+    return res.status(400).json({
+      success: false,
+      message: "Please Login...",
+    });
+  }
 
   const user_id = isValidObjectId(userId?.id) ? new Types.ObjectId(userId?.id) : null;
   const job_id = isValidObjectId(id)?  new Types.ObjectId(id) : null;
@@ -65,13 +69,6 @@ export const bookmark_A_job = async (req, res) => {
   console.log("user_id", user_id);
   console.log("job_id", job_id);
   
-  if (!user_id || !job_id) {
-    return res.status(400).json({
-      success: false,
-      message: "Please Login...",
-    });
-  }
-
 
   try {
     const bookmarkingJob = await BookMarkJob.create({ job: job_id, user: user_id });
@@ -90,14 +87,14 @@ export const bookmark_A_job = async (req, res) => {
 
 
 export const getBookmark_jobs = async (req, res) => {
-  const userId = req.query.id;
+  const userId = req.userId;
 
-  if (!userId)
-    return res.status(400).json({ success: false, message: "Please Login" });
+  const user_id = isValidObjectId(userId?.id) ? new Types.ObjectId(userId?.id) : null;
+
   try {
-    const getBookMark = await BookMarkJob.find({ user: userId })
-      .populate("job")
-      .populate("user");
+    const getBookMark = await BookMarkJob.find({ user: user_id })
+      .populate({path:"job", model: Job})
+      .populate({path:"user", model: User});
     return res.status(200).json({
       success: true,
       message: "Job Bookmarked successfully !",
@@ -113,7 +110,8 @@ export const getBookmark_jobs = async (req, res) => {
 };
 
 export const delete_bookmark_job = async (req, res) => {
-  const id = req.body;
+  const id = req.body.id  
+  
   if (!id)
     return res.status(400).json({ success: false, message: "Please Login" });
   try {

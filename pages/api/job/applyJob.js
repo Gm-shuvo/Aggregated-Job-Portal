@@ -5,7 +5,7 @@ import formidable from "formidable";
 import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
-import validateToken from "@/middleware/tokenValidation";
+// import validateToken from "@/middleware/tokenValidation";
 
 const schema = Joi.object({
   name: Joi.string().required(),
@@ -24,7 +24,7 @@ export const config = {
 
 export default async function handler(req, res) {
   try {
-    
+    await connectDBJobPortal();
     const { method } = req;
     switch (method) {
       case "POST":
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
 const applyToJob = async (req, res) => {
   try {
-    await connectDBJobPortal();
+    
     const form = formidable({ multiples: false });
 
     form.header = req.headers;
@@ -87,7 +87,7 @@ const applyToJob = async (req, res) => {
       )}_${randomString}${fileExtension}`;
       // console.log("🚀 ~ file: applyJob.js:88 ~ form.parse ~ fileName:", fileName)
       
-
+      
       const newPath = path.join(process.cwd(), "public", "uploads", fileName);
 
       await fs.rename(cvFile, newPath);
@@ -100,14 +100,32 @@ const applyToJob = async (req, res) => {
         user,
         cv: fileName,
       };
+      try{
+      const jobApplicationExists = await AppliedJob.findOne({
+        email, user, job});
 
-      // console.log("jobApplication", jobApplication);
+      if (jobApplicationExists) {
+        return res.status(401).json({
+          success: false,
+          message: "You have already applied for this job!",
+        });
+      }
+
+      console.log("jobApplication", jobApplication);
 
       const newJobApplication = await AppliedJob.create(jobApplication);
       return res.status(200).json({
         success: true,
         message: "Job application submitted successfully!",
       });
+      
+    } catch (error) {
+      console.log("Error in apply job (server) => ", error);
+      return res.status(403).json({
+        success: false,
+        message: "Something Went Wrong. Please Retry login!",
+      });
+    }
     });
   } catch (error) {
     // console.log("Error in apply job (server) => ", error);

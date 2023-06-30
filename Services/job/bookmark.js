@@ -10,11 +10,14 @@ export const check_bookmark_job = async (id) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("token")}`,
+      
       },
-      body: JSON.stringify({ id }), // Send the data as an object with 'id' property
+      body: JSON.stringify({ id }),
+       // Send the 'id' property as a query parameter
     });
+    const data = res.json();
 
-    return res;
+    return data;
   } catch (error) {
     console.log("Error in bookmarkJob:", error);
     throw error; // Propagate the error to the calling code
@@ -22,8 +25,6 @@ export const check_bookmark_job = async (id) => {
 };
 
 // bookmark job api
-
-
 
 export const book_mark_job = async (id) => {
   console.log("jobId", id);
@@ -50,7 +51,7 @@ export const book_mark_job = async (id) => {
 export const get_book_mark_job = async (id) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/bookmark?id=${id}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/bookmark`,
       {
         method: "GET",
         headers: {
@@ -77,10 +78,10 @@ export const delete_book_mark_job = async (id) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        body: JSON.stringify(id),
+        body: JSON.stringify({id}),
       }
     );
-    const data = res.json();
+    const data = await res.json();
     return data;
   } catch (error) {
     console.log("error in deleting bookmark job (service) => ", error);

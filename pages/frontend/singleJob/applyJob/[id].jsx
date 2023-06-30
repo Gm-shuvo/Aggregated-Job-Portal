@@ -16,11 +16,11 @@ function ApplyJob() {
     setId(router.query?.id);
   }, [router.query?.id]);
 
-  console.log("🚀 ~ file: [id].jsx:9 ~ ApplyJob ~ id", id);
+  // console.log("🚀 ~ file: [id].jsx:9 ~ ApplyJob ~ id", id);
 
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState({});
-  console.log("🚀 ~ file: [id].jsx:17 ~ ApplyJob ~ errors:", errors);
+  // console.log("🚀 ~ file: [id].jsx:17 ~ ApplyJob ~ errors:", errors);
 
   const [formikData, setFormikData] = useState({
     name: activeUser?.name,
@@ -30,9 +30,9 @@ function ApplyJob() {
     user: activeUser?._id,
   });
 
-  console.log("🚀 ~ file: [id].jsx:36 ~ ApplyJob ~ formikData:", formikData);
+  // console.log("🚀 ~ file: [id].jsx:36 ~ ApplyJob ~ formikData:", formikData);
 
-  console.log(activeUser);
+  // console.log(activeUser);
 
   useEffect(() => {
     if (activeUser?.type === "recruiter") {
@@ -44,13 +44,13 @@ function ApplyJob() {
     formikData.job = id;
   }
   const { name, email, about, job, user } = formikData;
-  console.log("🚀 ~ file: [id].jsx:44 ~ ApplyJob ~ name, email, about, job, user:", name, email, about, job, user)
+  // console.log("🚀 ~ file: [id].jsx:44 ~ ApplyJob ~ name, email, about, job, user:", name, email, about, job, user)
 
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 ~ file: [id].jsx:39 ~ validateForm ~ e:", validateForm());
+    // console.log("🚀 ~ file: [id].jsx:39 ~ validateForm ~ e:", validateForm());
     if (!validateForm()) return;
 
     const form = new FormData();
@@ -61,7 +61,7 @@ function ApplyJob() {
     form.append("user", user);
     form.append("cv", file);
 
-    console.log("🚀 ~ file: [id].jsx:50 ~ handleSubmit ~ form:", form);
+    // console.log("🚀 ~ file: [id].jsx:50 ~ handleSubmit ~ form:", form);
 
     try {
       const res = await apply_job(form);
@@ -69,12 +69,15 @@ function ApplyJob() {
 
       if (res.success) {
         toast.success("Your Application is Submitted, Redirecting...");
+        
         setTimeout(() => {
-          router.push("/");
-        }, 1000);
-      } else {
-        toast.error("Something Went Wrong");
-      }
+          router.push("/frontend/dashboard");
+        }, 500);
+      } 
+      else {
+        toast.error(res.message); 
+        router.reload();
+      }        
     } catch (error) {
       let errorMessage = "Something went wrong";
       if (error.response) {

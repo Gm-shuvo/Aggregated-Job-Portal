@@ -3,6 +3,7 @@ import validateToken from "@/middleware/tokenValidation";
 import ApplyJob from "@/models/ApplyJob";
 import User from "@/models/User";
 import Job from "@/models/Job";
+import { Types } from "mongoose";
 
 export const config = { 
   api: {
@@ -37,22 +38,20 @@ export default async function handler(req, res) {
 
 const getAppliedJobs = async (req, res) => {
   
-  const _id = req.userId.id;
+  const id = req.userId.id;
   const _id = Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null;
 
   if (!_id) {
     return res.status(400).json({ success: false, message: 'Invalid Job ID format' });
   }
 
-  if (!userId)
-    return res.status(400).json({ success: false, message: "Please Login" });
-
+  
   try {
     
-    const gettingAppliedJobs = await ApplyJob.find({ user: userId })
-      .populate({ path: "user", User })
-      .populate({ path: "job", Job });
-    return res.status(200).json({ success: true, data: gettingAppliedJobs });
+    const gettingAppliedJobs = await ApplyJob.find({ user: _id })
+      .populate({ path: "user", model: User })
+      .populate({ path: "job", model: Job });
+    return res.status(200).json({ success: true, data: gettingAppliedJobs , message: "Applied Jobs" });
   } catch (error) {
     console.log("Error in getting applied  job (server) => ", error);
     return res
