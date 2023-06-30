@@ -2,27 +2,31 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { AiFillDelete } from "react-icons/ai";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import {delete_apply_job} from '@/Services/job/apply'
+import { useDispatch, useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import { delete_apply_job } from "@/Services/job/apply";
 import { setAppliedJob } from "@/Utils/AppliedJobSlice";
+
+
 export default function AppliedJobDataTable() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
+  const [Data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
-  const appliedJobData = useSelector((state) => state.AppliedJob.appliedJob);
+  const appliedJobData = useSelector((state) => state.AppliedJob?.appliedJob);
 
   console.log(
     "🚀 ~ file: AppliedJobDataTable.jsx:12 ~ AppliedJobDataTable ~ appliedJobData",
     appliedJobData
   );
-  const [Data, setData] = useState([]);
-  console.log(
-    "🚀 ~ file: AppliedJobDataTable.jsx:12 ~ AppliedJobDataTable ~ Data:",
-    Data
-  );
+  // const [Data, setData] = useState([]);
+  // console.log(
+  //   "🚀 ~ file: AppliedJobDataTable.jsx:12 ~ AppliedJobDataTable ~ Data:",
+  //   Data
+  // );
 
   useEffect(() => {
     setData(appliedJobData);
@@ -32,25 +36,7 @@ export default function AppliedJobDataTable() {
     setFilteredData(Data);
   }, [Data]);
 
-
-  const handleDelete = async (id) => {
-    if (!id) {
-      toast.error("Job is not found");
-      return;
-    }
-    try {
-      const res = await delete_apply_job(id);
-      console.log("🚀 ~ file: AppliedJobDataTable.jsx:43 ~ handleDelete ~ res:", res)
-      if (res.success) {
-        toast.success(res.message);
-        return dispatch(setAppliedJob(filteredData.filter((item) => item?._id !== id)));
-      } else {
-        return toast.error(res.message);
-      }
-    } catch (err) {
-      toast.error(err?.message);
-    }
-  };
+  
 
   const columns = [
     {
@@ -85,7 +71,18 @@ export default function AppliedJobDataTable() {
     {
       name: "Action",
       cell: (row) => (
-        <div className='flex items-center space-x-4'>
+        <button
+          onClick={() => handleDelete(row?._id)}
+          className="md:px-2 md:py-2 px-1 py-1 text-xl text-red-600 hover:text-white my-2 hover:bg-red-600 border border-red-600   rounded transition-all duration-700  "
+        >
+          <AiFillDelete />
+        </button>
+      ),
+    },
+    {
+      name: "View Detail",
+      cell: (row) => (
+        <div className="flex items-center space-x-4">
           <button
             onClick={() =>
               router.push(`/frontend/singleJob/${row?.job?._id}?s=JobBit`)
@@ -93,12 +90,6 @@ export default function AppliedJobDataTable() {
             className="md:px-2 md:py-2 px-1 py-1 text-xs text-indigo-600 hover:text-white my-2 hover:bg-indigo-600 border border-indigo-600   rounded transition-all duration-700  "
           >
             view Detail
-          </button>
-          <button
-            onClick={() => handleDelete(row?._id)}
-            className="md:px-2 md:py-2 px-1 py-1 text-xl text-red-600 hover:text-white my-2 hover:bg-red-600 border border-red-600   rounded transition-all duration-700  "
-          >
-            <AiFillDelete />
           </button>
         </div>
       ),
@@ -118,6 +109,30 @@ export default function AppliedJobDataTable() {
       );
     }
   }, [search, Data]);
+
+  const handleDelete = async (id) => {
+    if (!id) {
+      toast.error("Job is not found");
+      return;
+    }
+    try {
+      const res = await delete_apply_job(id);
+      console.log(
+        "🚀 ~ file: AppliedJobDataTable.jsx:43 ~ handleDelete ~ res:",
+        res
+      );
+      if (res.success) {
+        toast.success(res.message);
+        return dispatch(
+          setAppliedJob(filteredData.filter((item) => item?._id !== id))
+        );
+      } else {
+        return toast.error(res.message);
+      }
+    } catch (err) {
+      toast.error(err?.message);
+    }
+  };
 
   return (
     <>
@@ -145,6 +160,7 @@ export default function AppliedJobDataTable() {
         }
         className="h-screen bg-white"
       />
+      <ToastContainer />
     </>
   );
 }

@@ -20,15 +20,15 @@ function Dashboard() {
   const dispatch = useDispatch();
 
   const activeUser = useSelector((state) => state?.User?.userData);
-  const get_job = useSelector((state) => state?.AppliedJob?.appliedJob);
-  const get_bookmarks = useSelector((state) => state?.AppliedJob?.bookMark);
+  const select_get_job = useSelector((state) => state?.AppliedJob?.appliedJob);
+  const select_get_bookmarks = useSelector((state) => state?.AppliedJob?.bookMark);
   const id = activeUser?._id;
 
-  // useEffect(() => {
-  //   if (activeUser?.type === 'recruiter') {
-  //     router.push('/')
-  //   }
-  // }, [activeUser, router])
+  useEffect(() => {
+    if (activeUser?.type === 'recruiter') {
+      router.push('/')
+    }
+  }, [activeUser, router])
 
   useEffect(() => {
     fetchAppliedJobs();
@@ -67,6 +67,8 @@ function Dashboard() {
     setIsLoading(false);
   };
 
+  
+
   return (
     <>
       {isLoading ? (
@@ -84,7 +86,7 @@ function Dashboard() {
                 <GiSuitcase className="bg-gray-50 text-indigo-600 rounded-full w-10 h-10" />
                 <div className="flex flex-col mx-2 items-start justify-start px-2">
                   <p className="text-xl font-semibold">Total Applied</p>
-                  <p className="text-lg font-semibold">{get_job.length}</p>
+                  <p className="text-lg font-semibold">{select_get_job.length}</p>
                 </div>
               </div>
 
@@ -96,7 +98,7 @@ function Dashboard() {
                 <BsFillBookmarkStarFill className="bg-gray-50 text-indigo-600 rounded-full w-10 h-10" />
                 <div className="flex  flex-col items-start mx-2 justify-start px-2 ">
                   <p className="text-xl font-semibold">Save Jobs</p>
-                  <p className="text-lg font-semibold">{get_bookmarks.length}</p>
+                  <p className="text-lg font-semibold">{select_get_bookmarks.length}</p>
                 </div>
               </div>
 
