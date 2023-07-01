@@ -1,5 +1,8 @@
 import Cookies from "js-cookie";
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const check_apply_job = async (id) => {
     console.log("jobId", id);
   

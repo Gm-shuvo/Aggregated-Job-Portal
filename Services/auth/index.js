@@ -1,4 +1,7 @@
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const register_me = async (formData) => {
     console.log( formData);
     try {

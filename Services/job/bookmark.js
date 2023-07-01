@@ -1,5 +1,7 @@
 import Cookies from "js-cookie";
 
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const check_bookmark_job = async (id) => {
   console.log("jobId", id);

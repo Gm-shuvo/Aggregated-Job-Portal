@@ -9,6 +9,9 @@ import axios from 'axios';
 import { HiLocationMarker } from 'react-icons/hi';
 import { FaSuitcase } from 'react-icons/fa';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const locations = [
   'Dhaka',
   'Chittagong',
