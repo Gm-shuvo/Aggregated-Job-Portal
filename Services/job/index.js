@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 
 import dotenv from 'dotenv';
 dotenv.config();
-// post job api
+
 
 export const post_job = async (formData) => {
   try {
