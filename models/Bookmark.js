@@ -10,6 +10,10 @@ const bookMarkSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'job',
     },
+    source : {
+        type: String,
+        required: true,
+    }
 
 
 },{timestamps: true});

@@ -39,6 +39,6 @@ const LinkedinJobSchema = new mongoose.Schema({
   },
 });
 
-const LinkedinJob = mongoose.model("Linkedinjob", LinkedinJobSchema);
+const Linkedinjob = mongoose.models.Linkedinjob || mongoose.model('Linkedinjob', LinkedinJobSchema);
 
-export default LinkedinJob;
+export default Linkedinjob;

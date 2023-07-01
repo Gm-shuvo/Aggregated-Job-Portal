@@ -150,7 +150,6 @@ function JobDetails() {
   const handleApply = (e) => {
     e.preventDefault();
     if (!user) return toast.error("Please Login First");
-    // Handle apply logic here
     if(s === "LinkedIn"){
       window.open(jobData?.apply_link, "_blank")
     }else{
@@ -166,7 +165,7 @@ function JobDetails() {
     if (!id) return toast.error("Job not found");
 
     try {
-      const res = await book_mark_job(id);
+      const res = await book_mark_job(id, s);
       // console.log("Bookmark job:", res);
       if (res.status === 200) {
         toast.success("Job bookmarked successfully");

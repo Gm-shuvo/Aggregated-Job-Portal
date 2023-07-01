@@ -26,7 +26,7 @@ export const check_bookmark_job = async (id) => {
 
 // bookmark job api
 
-export const book_mark_job = async (id) => {
+export const book_mark_job = async (id, s) => {
   console.log("jobId", id);
 
   try {
@@ -36,7 +36,7 @@ export const book_mark_job = async (id) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      body: JSON.stringify({ id }), // Send the data as an object with 'id' property
+      body: JSON.stringify({ id, s }), // Send the data as an object with 'id' property
     });
 
     return res;

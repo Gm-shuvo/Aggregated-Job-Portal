@@ -52,6 +52,10 @@ function Dashboard() {
         get_job.data
       );
 
+      // get_bookmarks.data?.map((item) => {
+      //   if(item?.source === 'LinkedIn') {
+      //     const res = await get_linkedin_job()
+
       if (get_job.success && get_bookmarks.success) {
         dispatch(setAppliedJob(get_job?.data));
         dispatch(setBookMark(get_bookmarks?.data));

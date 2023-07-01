@@ -3,8 +3,11 @@ import validateToken from "@/middleware/tokenValidation";
 import BookMarkJob from "@/models/Bookmark";
 import Joi from "joi";
 import { Types, isValidObjectId } from "mongoose";
+
 import Job from "@/models/Job";
 import User from "@/models/User";
+import Linkedinjob from "@/models/Linkedinjob";
+
 
 export const config = {
   api: {
@@ -54,6 +57,7 @@ export default async function handler(req, res) {
 export const bookmark_A_job = async (req, res) => {
   
   const id = req.body.id;
+  const s = req.body.s;
   const userId = req.userId;
 
   if (!id || !userId?.id) {
@@ -68,10 +72,10 @@ export const bookmark_A_job = async (req, res) => {
 
   console.log("user_id", user_id);
   console.log("job_id", job_id);
-  
+  console.log("source", s);
 
   try {
-    const bookmarkingJob = await BookMarkJob.create({ job: job_id, user: user_id });
+    const bookmarkingJob = await BookMarkJob.create({ job: job_id, user: user_id, source: s });
     return res.status(200).json({
       success: true,
       message: "Job Bookmarked successfully!",
@@ -92,22 +96,70 @@ export const getBookmark_jobs = async (req, res) => {
   const user_id = isValidObjectId(userId?.id) ? new Types.ObjectId(userId?.id) : null;
 
   try {
-    const getBookMark = await BookMarkJob.find({ user: user_id })
-      .populate({path:"job", model: Job})
-      .populate({path:"user", model: User});
+    const getBookMark = await BookMarkJob.aggregate([
+      {
+        $match: { user: user_id }
+      },
+      {
+        $lookup: {
+          from: 'linkedinjobs', // The name of the LinkedIn jobs collection
+          localField: 'job',
+          foreignField: '_id',
+          as: 'linkedinJob'
+        }
+      },
+      {
+        $lookup: {
+          from: 'jobs', // The name of the jobs collection
+          localField: 'job',
+          foreignField: '_id',
+          as: 'job'
+        }
+      },
+      {
+        $addFields: {
+          job: {
+            $cond: {
+              if: { $eq: ['$source', 'LinkedIn'] },
+              then: '$linkedinJob',
+              else: '$job'
+            }
+          }
+        }
+      },
+      {
+        $unwind: '$job'
+      },
+      {
+        $lookup: {
+          from: 'users', // The name of the users collection
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      }
+    ]);
+
     return res.status(200).json({
       success: true,
-      message: "Job Bookmarked successfully !",
-      data: getBookMark,
+      message: 'Bookmarked jobs fetched successfully!',
+      data: getBookMark
     });
   } catch (error) {
-    console.log("Error in getting book mark Job (server) => ", error);
+    console.log('Error in getting bookmarked jobs (server) => ', error);
     return res.status(500).json({
       success: false,
-      message: "Something Went Wrong Please Retry Later !",
+      message: 'Something went wrong. Please try again later!'
     });
   }
 };
+
+
+
+
 
 export const delete_bookmark_job = async (req, res) => {
   const id = req.body.id  
