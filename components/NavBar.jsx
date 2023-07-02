@@ -15,7 +15,7 @@ export default function NavBar() {
   const Router = useRouter();
   const user = useSelector((state) => state?.User?.userData);
 
-  console.log(user?.type);
+  // console.log(user?.type);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,21 +42,18 @@ export default function NavBar() {
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 20) {
-        isScrolled(true);
-      } else {
-        isScrolled(false);
-      }
-    });
-    return () => {
-      window.removeEventListener("scroll", () => {
+    const addListener =()=>{
+      window.addEventListener("scroll", () => {
         if (window.scrollY > 20) {
           isScrolled(true);
         } else {
           isScrolled(false);
         }
       });
+    }
+    addListener();
+    return () => {
+      addListener();
     };
   }, [scrolled]);
 
@@ -64,8 +61,8 @@ export default function NavBar() {
     Cookies.remove("token");
     localStorage.removeItem("user");
     dispatch(setUserData(null));
-    // Router.reload();
     Router.push("/");
+    // Router.reload();
   };
 
   const handleClickOutside = () => {
@@ -78,7 +75,7 @@ export default function NavBar() {
       <div
         className={`w-full ${
           scrolled ? "bg-indigo-600/70" : "bg-indigo-600"
-        } px-6 h-[50px] bg-indigo-600 text-white flex items-center justify-between fixed top-0 left-0 z-50`}
+        } px-6 h-fit py-2 bg-indigo-600 text-white flex items-center justify-between fixed top-0 left-0 z-50`}
       >
         <div className="px-2 h-full flex items-center justify-center">
           <Link href={"/"}>
