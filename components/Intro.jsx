@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BsFillBookmarkFill } from "react-icons/bs";
+import useAutosuggest from "@/hooks/useAutosuggestion";
 import Select from "react-select";
-import {CurrentLocation} from '@/Services/CurrentLocation';
-
-import { useSelector } from "react-redux";
 import JobsCard from "./JobsCard";
 import Autosuggest from "react-autosuggest";
 import axios from "axios";
@@ -28,17 +26,13 @@ export default function Intro() {
   // const jobData = useSelector(state => state.Job.JobData);
   const [filterJobs, setFilteredJobs] = useState([]);
   const [doneSearch, setDoneSearch] = useState(false);
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState('');
+  const [query, setQuery] = useState("");
+  const [location, setLocation] = useState("");
   const [jobType, setJobType] = useState("");
   const [jobLevel, setJobLevel] = useState("");
-  const [error, setError] = useState(null);
-
-  
-
+  const [error, setError] = useState("");
   // console.log(jobData)
-  console.log(query, location, jobType);
+  console.log(query, location, jobType, jobLevel);
   const handleSearch = async (e) => {
     e.preventDefault();
     // const filteredJobs = jobData?.filter((job) => {
@@ -48,7 +42,7 @@ export default function Intro() {
     // setDoneSearch(true)
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSearchJobs?query=${query}&category=${category}&location=${location}&job_type=${jobType}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSearchJobs?query=${query}&location=${location}&job_type=${jobType}`
       );
 
       // Handle the response data
@@ -63,41 +57,52 @@ export default function Intro() {
   // console.log(query, category, location, jobType)
 
   /// Auto Suggest
-  const [suggestions, setSuggestions] = useState([]);
-  const onLocationChange = (event, { newValue }) => {
-    setLocation(newValue);
-  };
 
-  const getSuggestions = (value) => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
+  const {
+    suggestions,
+    inputProps,
+    onSuggestionsFetchRequested,
+    onSuggestionsClearRequested,
+    getSuggestionValue,
+    renderSuggestion,
+  } = useAutosuggest(location, setLocation);
 
-    return inputLength === 0
-      ? []
-      : locations.filter(
-          (loc) => loc.toLowerCase().slice(0, inputLength) === inputValue
-        );
-  };
+  ////
+  // const [suggestions, setSuggestions] = useState([]);
+  // const onLocationChange = (event, { newValue }) => {
+  //   setLocation(newValue);
+  // };
 
-  const onSuggestionsFetchRequested = ({ value }) => {
-    setSuggestions(getSuggestions(value));
-  };
+  // const getSuggestions = (value) => {
+  //   const inputValue = value.trim().toLowerCase();
+  //   const inputLength = inputValue.length;
 
-  const onSuggestionsClearRequested = () => {
-    setSuggestions([]);
-  };
+  //   return inputLength === 0
+  //     ? []
+  //     : locations.filter(
+  //         (loc) => loc.toLowerCase().slice(0, inputLength) === inputValue
+  //       );
+  // };
 
-  const getSuggestionValue = (suggestion) => suggestion;
-  const renderSuggestion = (suggestion) => <div className="">{suggestion}</div>;
+  // const onSuggestionsFetchRequested = ({ value }) => {
+  //   setSuggestions(getSuggestions(value));
+  // };
 
-  const inputProps = {
-    placeholder: "Town or origin...",
-    value: location,
-    onChange: onLocationChange,
-    style : {
-      width : "100%"
-    }
-  };
+  // const onSuggestionsClearRequested = () => {
+  //   setSuggestions([]);
+  // };
+
+  // const getSuggestionValue = (suggestion) => suggestion;
+  // const renderSuggestion = (suggestion) => <div className="">{suggestion}</div>;
+
+  // const inputProps = {
+  //   placeholder: "City or Country...",
+  //   value: location,
+  //   onChange: onLocationChange,
+  //   style: {
+  //     width: "100%",
+  //   },
+  // };
 
   const handleJobTypesChange = useCallback((selectedOption) => {
     const selectedValue = selectedOption ? selectedOption.value : "";
@@ -128,30 +133,38 @@ export default function Intro() {
 
   console.log(jobType, jobLevel);
   console.log(location);
-  
+  console.log(error)
+
   const handleLocationClick = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          console.log(latitude, longitude);
-          // Use latitude and longitude to fetch the location details
-          var requestOptions = {
-            method: 'GET',
-          };
-  
-          console.log(process.env.GEO_API_KEY)
-          
-          fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=4ab703f09e404891a6082fed9f10d415`, requestOptions)
-            .then(response => response.json())
-            .then(result => setLocation(`${result.features[0].properties.city} ${','} ${result.features[0].properties.country}`))
-            .catch(error => setError(error.message));
-        },
-      );
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        console.log(latitude, longitude);
+        // Use latitude and longitude to fetch the location details
+        var requestOptions = {
+          method: "GET",
+        };
+
+        // console.log(process.env.NEXT_PUBLIC_GEO_API_KEY);
+
+        fetch(
+          `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=${process.env.NEXT_PUBLIC_GEO_API_KEY}`,
+          requestOptions
+        )
+          .then((response) => response.json())
+          .then((result) =>{
+            console.log(result.features[0].properties.city)
+            setLocation(
+              `${result.features[0].properties.city}${","}${
+                result.features[0].properties.country
+              }`
+            )}
+          )
+          .catch((error) => setError(error.message));
+      });
     } else {
       setError("Your browser does not support geolocation!");
     }
-    
   };
 
   return (
@@ -169,7 +182,7 @@ export default function Intro() {
             <div className="flex flex-col w-full space-y-2">
               <label
                 htmlFor="What"
-                className="flex gap-2 items-center text-base text-gray-400"
+                className="flex gap-2 items-center text-base  text-gray-400"
               >
                 <FaSuitcase size={18} />
                 What
@@ -201,7 +214,11 @@ export default function Intro() {
                   renderSuggestion={renderSuggestion}
                   inputProps={inputProps}
                 />
-                <LuLocateFixed size={18} className=" block -ml-7 z-20 cursor-pointer" onClick={handleLocationClick}/>
+                <LuLocateFixed
+                  size={18}
+                  className=" block -ml-7 z-20 cursor-pointer"
+                  onClick={handleLocationClick}
+                />
               </div>
             </div>
 
@@ -234,7 +251,7 @@ export default function Intro() {
               />
             </div>
           </div>
-          <div className=" w-full py-2 flex items-center justify-start flex-wrap">
+          <div className=" w-full mt-3 py-2 flex items-center justify-start flex-wrap">
             <div className="flex items-center justify-center">
               <BsFillBookmarkFill className="text-indigo-600 text-xl " />
               <h1 className="font-semibold text-lg mx-2">Suggest Tag : </h1>
@@ -263,7 +280,7 @@ export default function Intro() {
           )}
         </div>
       )}
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 }
