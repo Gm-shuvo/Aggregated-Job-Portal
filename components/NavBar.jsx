@@ -10,6 +10,8 @@ import { setUserData } from "@/Utils/UserSlice";
 import {
   AiFillCaretDown,
   AiFillCaretUp,
+  AiOutlineClose,
+  AiOutlineMenu,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
 import { RxAvatar as Avatar, RxDashboard } from "react-icons/rx";
@@ -75,8 +77,8 @@ export default function NavBar() {
       <div
         className={`w-full ${
           scrolled ? "bg-indigo-600/70" : "bg-indigo-600/90"
-        }  px-14 h-fit py-[16px] inset-0 text-white flex items-center justify-between fixed z-50`}
-        ref={[navRef, optionRef]}
+        } px-2 md:px-14 h-fit py-[10px] md:py-[16px] inset-0 text-white flex items-center justify-between fixed z-50`}
+        ref={navRef}
       >
         <div className="px-2 h-full flex items-center justify-center gap-10">
           <Link href={"/"}>
@@ -122,13 +124,13 @@ export default function NavBar() {
               <>
                 <Link
                   href={"/auth/login"}
-                  className="py-2 px-3 w-full text-center border border-white rounded uppercase tracking-widest mx-4   transition-all duration-700 hover:bg-white font-semibold text-base hover:text-indigo-600"
+                  className="py-2 px-3 w-full text-center border border-indigo-200 rounded uppercase tracking-widest mx-4   transition-all duration-700 hover:bg-white font-semibold text-base hover:text-indigo-600"
                 >
                   Login
                 </Link>
                 <Link
                   href={"/auth/register"}
-                  className="py-2 px-3 w-full text-center border border-white rounded uppercase tracking-widest mx-4   text-indigo-600 bg-white transition-all duration-700 hover:bg-transparent font-semibold text-base hover:text-white"
+                  className="py-2 px-3 w-full text-center border border-indigo-200 rounded uppercase tracking-widest mx-4   text-indigo-600 bg-indigo-200 transition-all duration-700 hover:bg-transparent font-semibold text-base hover:text-white"
                 >
                   REGISTER
                 </Link>
@@ -137,7 +139,7 @@ export default function NavBar() {
           </div>
         </div>
         {user !== null && isUserOptionsOpen && (
-          <div className="hidden lg:flex absolute top-16 right-10 bg-white text-base text-black rounded shadow-lg w-40  flex-col gap-1">
+          <div className="hidden lg:flex absolute top-16 right-10 bg-indigo-200/90 text-base text-black rounded shadow-lg w-40  flex-col gap-1">
             <Link
               href={"/frontend/profile"}
               className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base  font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
@@ -174,10 +176,10 @@ export default function NavBar() {
         )}
 
         <div id="menu" className="flex lg:hidden py-2 ">
-          <GiHamburgerMenu
+          {isOpen? <AiOutlineClose size={25} className="text-2xl" onClick={() => setIsOpen((state) => !state)}/> : <AiOutlineMenu size={25}
             className="text-2xl"
             onClick={() => setIsOpen((state) => !state)}
-          />
+          />}
         </div>
 
         {isOpen && (
@@ -235,17 +237,17 @@ export default function NavBar() {
                     View Jobs
                   </Link>
 
-                  <Link
+                  {user?.type==='candidate' && <Link
                     href={"/frontend/dashboard"}
                     onClick={() => setIsOpen(false)}
                     className="w-full py-2 hover:bg-indigo-400 outline-none px-2 rounded text-center uppercase font-semibold"
                   >
                     Dashboard
-                  </Link>
+                  </Link>}
                 </div>
               )}
             </div>
-            <div className="px-2 h-full  items-center justify-center flex">
+            <div className="px-2 h-full mt-3  items-center justify-center flex">
               {user !== null ? (
                 <>
                   <p className="text-lg px-4 font-semibold">{user?.name}</p>
@@ -258,13 +260,13 @@ export default function NavBar() {
                 <>
                   <Link
                     href={"/auth/login"}
-                    className="py-2 px-3 w-full text-center border border-white rounded uppercase tracking-widest mx-4   transition-all duration-700 hover:bg-white font-semibold text-base hover:text-indigo-600"
+                    className="py-2 px-3 w-full text-center border border-indigo-200 rounded uppercase tracking-widest mx-4   transition-all duration-700 hover:bg-indigo-200 font-semibold text-base hover:text-indigo-600"
                   >
                     Login
                   </Link>
                   <Link
                     href={"/auth/register"}
-                    className="py-2 px-3 w-full text-center border border-white rounded uppercase tracking-widest mx-4   text-indigo-600 bg-white transition-all duration-700 hover:bg-transparent font-semibold text-base hover:text-white"
+                    className="py-2 px-3 w-full text-center border border-indigo-200 rounded uppercase tracking-widest mx-4   text-indigo-600 bg-indigo-200 transition-all duration-700 hover:bg-transparent font-semibold text-base hover:text-white"
                   >
                     REGISTER
                   </Link>

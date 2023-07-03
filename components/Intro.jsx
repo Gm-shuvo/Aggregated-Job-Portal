@@ -158,14 +158,14 @@ export default function Intro() {
     <>
       <div className="w-full h-full flex items-center lg:justify-start py-24 justify-center flex-wrap  ">
         <div className="lg:w-12/12 w-full sm:p-2 h-full my-2 flex items-center justify-center px-2 md:items-start md:justify-start md:p-20 flex-col ">
-          <h1 className="md:text-6xl text-2xl sm:text-2xl font-extrabold mb-4 text-black ">
+          <h1 className="md:text-6xl text-4xl sm:text-5xl font-extrabold mb-4 text-black ">
             To Choose <span className="text-indigo-600">Right Jobs.</span>{" "}
           </h1>
-          <p className="md:text-lg sm:text-sm text-xs mb-20 text-gray-400">
+          <p className="md:text-lg sm:text-base text-sm mb-10 md:2- text-gray-400">
             2400 Peoples are daily search in this portal, 100 user added job
             portal!
           </p>
-          <div className="relative w-full bg-white px-2 mb-6 md:px-4  py-6 flex sm:flex-row items-center justify-center rounded ring-2 ring-indigo-300/90">
+          <div className="relative w-full bg-white px-2 mb-6 md:px-4 py-3 first-letter: md:py-6 flex sm:flex-row items-center justify-center rounded ring-2 ring-indigo-300/90">
             <div className="flex flex-col w-full space-y-2">
               <label
                 htmlFor="What"
@@ -212,9 +212,8 @@ export default function Intro() {
               Search
             </button>
           </div>
-          <div className="flex items-center justify-center space-x-4 space-y-2">
+          <div className="flex items-center justify-center space-x-4 ">
             <div className="flex item-center gap-4">
-              <label htmlFor="Job type">Sort-by:</label>
               <Select
                 className="w-full flex flex-col items-start justify-center"
                 defaultValue={defaultValueTypes}
@@ -225,9 +224,6 @@ export default function Intro() {
               />
             </div>
             <div className="flex item-center justify-center gap-4">
-              <label htmlFor="Job type" className="flex text-center">
-                Sort-by:
-              </label>
               <Select
                 className="w-full flex flex-col items-start justify-center"
                 defaultValue={defaultValueLevel}
