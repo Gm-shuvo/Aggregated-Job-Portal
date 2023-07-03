@@ -73,7 +73,7 @@ export default function Home() {
       </Head>
         <>
           <NavBar />
-          <div className="w-full h-screen bg-gray-200  text-black">
+          <div className="w-full h-screen bg-gray-100  text-black">
             <Intro />
           </div>
         </>
