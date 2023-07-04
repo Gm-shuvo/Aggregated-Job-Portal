@@ -15,7 +15,7 @@ const JobsCard = ({ job, border, posted }) => {
 
   return (
     <Link href={`${posted ? `/frontend/detailPostedJob/${job?._id}`:`/frontend/singleJob/${job?._id}?s=${source}`}`} key={job?._id}
-    className={`group w-full p-4 cursor-pointer transition-all duration-600 border-${border} shadow-gray-400 hover:shadow-lg rounded-md`}
+    className={`group w-full p-4 cursor-pointer transition-all duration-600 border-2 border-${border} shadow-gray-400 hover:shadow-lg rounded-md ring-2 ring-indigo-500/90`}
   >
     <div
       

@@ -35,6 +35,7 @@ export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [scrolled, isScrolled] = useState(false);
+
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function NavBar() {
   };
 
   useOutsideClick(navRef, handleClickOutside);
-  useOutsideClick(optionRef, handleUserOptions);
+  // useOutsideClick(optionRef, handleUserOptions);
   return (
     <>
       <div

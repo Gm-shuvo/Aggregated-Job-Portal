@@ -1,7 +1,6 @@
 import '@/styles/globals.css'
 import { store } from '@/Store/store'
 import { Provider } from 'react-redux'
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import 'react-toastify/dist/ReactToastify.css';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
@@ -23,7 +22,7 @@ export default function App({
   console.log(currentPath);
 
   const titles = {
-    "/": "Job Portal",
+    
     "/auth/login": "Login",
     "/auth/register": "Signup",
     "/forgot-password": "Forgot Password",
@@ -45,7 +44,7 @@ export default function App({
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <Head>
-          <title>{title}</title>
+          <title>{`JobBit | ${title}`}</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         </Head>
         <NavBar />

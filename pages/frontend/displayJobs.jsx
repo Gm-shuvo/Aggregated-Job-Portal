@@ -19,7 +19,6 @@ export default function DisplayJobs() {
 
   return (
     <>
-      
       {loading ? (
         <Loader />
       ) : (

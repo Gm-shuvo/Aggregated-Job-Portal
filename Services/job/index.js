@@ -24,6 +24,26 @@ export const post_job = async (formData) => {
   }
 };
 
+export const edit_post_job = async (formData) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/editPostJob`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log("error in post job (service) => ", error);
+  }
+};
+
 // get job api
 export const get_job = async (page = 1) => {
   console.log("page", page);
