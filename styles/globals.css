@@ -47,10 +47,10 @@
     position: absolute;
     width:100%;
     --tw-bg-opacity: 1;
-    background-color: #ffffff;
+    background-color: rgb(224 231 255 / 0.7);
     display: flex;
     flex-direction: column;
-    /* border: 1px solid #aaa; */
+    
     padding: 10px 20px;
     /* bottom: -110px; */
     margin: 0 8px;
@@ -59,12 +59,13 @@
 .react-autosuggest__suggestions-container--open li{
     list-style: none;
     padding: 2px 3px;
-    border-bottom: 1px solid #bdbdbd;
+    margin: 2px 0;
     
 }
 .react-autosuggest__suggestions-container--open li:hover{
     --tw-bg-opacity: 1;
-    background-color: rgb(85, 84, 84);
+    background-color: rgb(126, 151, 235);
+    border-radius: 4px;
     cursor: pointer;
     
 }

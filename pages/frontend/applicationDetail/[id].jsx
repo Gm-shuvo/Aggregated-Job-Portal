@@ -37,7 +37,7 @@ function ApplicationsDetail() {
                     </div>
                 ) : (
                     <>
-                        <NavBar />
+                        
                         <div className='w-full px-4 flex flex-wrap  pt-20 '>
                             <div className='w-full h-32 bg-gray-50 text-indigo-600 font-bold flex items-center justify-center flex-col'>
                                 <h1 className='text-3xl'>Application Detail</h1>

@@ -35,14 +35,10 @@ export default function Intro() {
   console.log(query, location, jobType, jobLevel);
   const handleSearch = async (e) => {
     e.preventDefault();
-    // const filteredJobs = jobData?.filter((job) => {
-    //   let x = job?.job_category;
-    //   return x?.toUpperCase() === search?.toUpperCase().trim();
-    // });
-    // setDoneSearch(true)
+    setDoneSearch(false);
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSearchJobs?query=${query}&location=${location}&job_type=${jobType}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSearchJobs?q=${query}&loc=${location}&jt=${jobType}&jl=${jobLevel}`
       );
 
       // Handle the response data
@@ -67,42 +63,6 @@ export default function Intro() {
     renderSuggestion,
   } = useAutosuggest(location, setLocation);
 
-  ////
-  // const [suggestions, setSuggestions] = useState([]);
-  // const onLocationChange = (event, { newValue }) => {
-  //   setLocation(newValue);
-  // };
-
-  // const getSuggestions = (value) => {
-  //   const inputValue = value.trim().toLowerCase();
-  //   const inputLength = inputValue.length;
-
-  //   return inputLength === 0
-  //     ? []
-  //     : locations.filter(
-  //         (loc) => loc.toLowerCase().slice(0, inputLength) === inputValue
-  //       );
-  // };
-
-  // const onSuggestionsFetchRequested = ({ value }) => {
-  //   setSuggestions(getSuggestions(value));
-  // };
-
-  // const onSuggestionsClearRequested = () => {
-  //   setSuggestions([]);
-  // };
-
-  // const getSuggestionValue = (suggestion) => suggestion;
-  // const renderSuggestion = (suggestion) => <div className="">{suggestion}</div>;
-
-  // const inputProps = {
-  //   placeholder: "City or Country...",
-  //   value: location,
-  //   onChange: onLocationChange,
-  //   style: {
-  //     width: "100%",
-  //   },
-  // };
 
   const handleJobTypesChange = useCallback((selectedOption) => {
     const selectedValue = selectedOption ? selectedOption.value : "";
@@ -130,10 +90,6 @@ export default function Intro() {
   ];
 
   const defaultValueLevel = useMemo(() => optionsLevel[0], []);
-
-  console.log(jobType, jobLevel);
-  console.log(location);
-  console.log(error)
 
   const handleLocationClick = () => {
     if (navigator.geolocation) {

@@ -43,7 +43,7 @@ const useAutosuggest = (location, setLocation) => {
     const location = value.trim().toLowerCase();
     // Implement your own logic for filtering suggestions based on the input value
     const filteredSuggestions = locationsArr.filter((suggestion) =>
-      suggestion.toLowerCase().includes(location)
+      suggestion.toLowerCase().indexOf(location) > -1
     );
     setSuggestions(filteredSuggestions);
   };
