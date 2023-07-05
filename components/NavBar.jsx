@@ -17,7 +17,6 @@ import {
 import { RxAvatar as Avatar, RxDashboard } from "react-icons/rx";
 import { IoIosLogOut } from "react-icons/io";
 import { BsMegaphone } from "react-icons/bs";
-import { options } from "joi";
 
 export default function NavBar() {
   const dispatch = useDispatch();
@@ -27,7 +26,7 @@ export default function NavBar() {
   const [openJobs, setOpenJobs] = useState(false);
 
   const currentPath = Router.pathname;
-  console.log("🚀 ~ file: NavBar.jsx:25 ~ NavBar ~ currentPath:", currentPath);
+  // console.log("🚀 ~ file: NavBar.jsx:25 ~ NavBar ~ currentPath:", currentPath);
 
   const user = useSelector((state) => state?.User?.userData);
 
@@ -36,6 +35,7 @@ export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [scrolled, isScrolled] = useState(false);
+
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function NavBar() {
   };
 
   useOutsideClick(navRef, handleClickOutside);
-  useOutsideClick(optionRef, handleUserOptions);
+  // useOutsideClick(optionRef, handleUserOptions);
   return (
     <>
       <div
@@ -86,10 +86,10 @@ export default function NavBar() {
               JOB-BIT
             </p>
           </Link>
-          <div className="serach flex items-center justify-center gap-2 text-base">
+          {currentPath === '/' && <div className="serach flex items-center justify-center gap-2 text-base">
             <BiSearchAlt size={23} className="active_underline" />
             Search
-          </div>
+          </div>}
         </div>
         <div className=" px-2 h-full hidden items-center justify-center lg:flex"></div>
         <div className="px-2 h-full hidden items-center justify-center lg:flex">
@@ -139,9 +139,10 @@ export default function NavBar() {
           </div>
         </div>
         {user !== null && isUserOptionsOpen && (
-          <div className="hidden lg:flex absolute top-16 right-10 bg-indigo-200/90 text-base text-black rounded shadow-lg w-40  flex-col gap-1">
+          <div className="hidden lg:flex absolute top-16 right-10 bg-indigo-100 text-base text-black rounded shadow-lg w-40  flex-col gap-1">
             <Link
               href={"/frontend/profile"}
+              onClick={() => setIsUserOptionsOpen(false)}
               className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base  font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
             >
               <Avatar size={20} />
@@ -150,6 +151,7 @@ export default function NavBar() {
             {user.type === "candidate" ? (
               <Link
                 href={"/frontend/dashboard"}
+                onClick={() => setIsUserOptionsOpen(false)}
                 className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
               >
                 <RxDashboard />
@@ -158,6 +160,7 @@ export default function NavBar() {
             ) : (
               <Link
                 href={"/frontend/postedJob"}
+                onClick={() => setIsUserOptionsOpen(false)}
                 className="flex items-center px-2 justify-selft-start gap-2 py-2 w-full text-center text-base font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
               >
                 <RxDashboard />
@@ -166,7 +169,8 @@ export default function NavBar() {
             )}
             <Link
               href={"/"}
-              onClick={handleLogout}
+              onClick={() => {handleLogout(); setIsUserOptionsOpen(false)}}
+              
               className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base font-normal uppercase  hover:bg-indigo-600 hover:text-white transition-all duration-700"
             >
               <IoIosLogOut />

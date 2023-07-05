@@ -4,34 +4,19 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { post_job } from "@/Services/job";
+import { edit_post_job, get_specified_job } from "@/Services/job";
 import { useRouter } from "next/router";
-import Cookies from "js-cookie";
 import { withAuth } from "@/middleware/withAuth";
 
-const options = [
-  { value: "Full-time", label: "Full-time" },
-  { value: "Part-time", label: "Part-time" },
-  { value: "Remote", label: "Remote" },
-  { value: "Intern", label: "Intern" },
-];
-
-const optionsLevel = [
-  { value: "Entry level", label: "Entry level" },
-  { value: "Imtermediate level", label: "Imtermediate level" },
-  { value: "Senior level", label: "Senior level" },
-];
-
-function PostAJob() {
+function EditJobPost() {
   const user = useSelector((state) => state.User.userData);
   console.log(user);
 
   const router = useRouter();
   const [formData, setFormData] = useState({
+    id: router.query.id,
     user: user?._id,
     job_title: "",
-    job_type: "",
-    job_level: "",
     company_name: "",
     job_location: "",
     job_description: "",
@@ -44,22 +29,29 @@ function PostAJob() {
     }
   }, [user, router]);
 
+  useEffect(() => {
+    const id = router.query.id;
+    const fetchData = async () => {
+      const { data } = await get_specified_job(id);
+      console.log(data);
+      setFormData({
+        id: data._id,
+        user: user?._id,
+        job_title: data.job_title,
+        company_name: data.company_name,
+        job_location: data.job_location,
+        job_description: data.job_description,
+      });
+    };
+    if (id) fetchData();
+  }, [router.query.id]);
+
   const validateForm = useCallback(() => {
     const errors = {};
     let hasErrors = false;
 
     if (!formData.job_title) {
       errors.job_title = "Job Title is required";
-      hasErrors = true;
-    }
-
-    if (!formData.job_type) {
-      errors.job_type = "Job Type is required";
-      hasErrors = true;
-    }
-
-    if (!formData.job_level) {
-      errors.job_level = "Job Level is required";
       hasErrors = true;
     }
 
@@ -89,64 +81,41 @@ function PostAJob() {
         toast.error("Please Login First");
         return;
       }
-      
+
       console.log(formData);
 
       if (formData.user && validateForm()) {
-        const res = await post_job(formData);
+        const res = await edit_post_job(formData);
         if (res.success) {
           toast.success(res.message);
           setTimeout(() => {
-            router.push("/frontend/displayJobs");
+            router.push(`/frontend/singleJob/${res.data?._id}?s=JobBit`);
           }, 1000);
         } else {
-            router.reload();
           toast.error(res.message);
+          router.reload();
         }
       }
-
-      
     },
     [formData, validateForm, router]
   );
 
-  const handleJobTypeChange = useCallback((selectedOption) => {
-    const selectedValue = selectedOption ? selectedOption.value : "";
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      job_type: selectedValue,
-    }));
-  }, []);
-
-  const defaultValue = useMemo(() => options[0], []);
-
-  const handleJobLevelChange = useCallback((selectedOption) => {
-    const selectedValue = selectedOption ? selectedOption.value : "";
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      job_level: selectedValue,
-    }));
-  }, []);
-
-  const defaultValueLevel = useMemo(() => optionsLevel[0], []);
-
   return (
     <>
-      
       <div className="w-full py-20 flex items-center justify-center flex-col">
         <h1 className="text-xl mt-4 uppercase tracking-widest border-b-2 border-b-indigo-600 py-2 font-semibold mb-8 md:text-2xl lg:text-4xl">
-          Enter Job Details
+          Edit Job Post
         </h1>
         <form
           onSubmit={handleSubmit}
-          className="sm:w-1/2 w-full px-4 mx-4 h-full"
+          className="sm:w-1/2 w-full px-8 mx-4 h-full bg-indigo-100/80 pt-10 pb-16 border rounded-md shadow-md "
         >
           <div className="w-full mb-4 flex flex-col items-start justify-center">
             <label htmlFor="title" className="mb-1 text-base font-semibold">
               Title:
             </label>
             <input
-              className="w-full border-2 border-gray-200 p-3 rounded outline-none focus:border-indigo-500"
+              className="w-full border-2 border-gray-200 p-3 rounded-md outline-none focus:border-indigo-500"
               type="text"
               id="jobTitle"
               value={formData.job_title}
@@ -172,7 +141,7 @@ function PostAJob() {
               Company Name:
             </label>
             <input
-              className="w-full border-2 border-gray-200 p-3 rounded outline-none focus:border-indigo-500"
+              className="w-full border-2 border-gray-200 p-3 rounded-md outline-none focus:border-indigo-500"
               type="text"
               id="companyName"
               value={formData.company_name}
@@ -195,7 +164,7 @@ function PostAJob() {
               Job Location:
             </label>
             <input
-              className="w-full border-2 border-gray-200 p-3 rounded outline-none focus:border-indigo-500"
+              className="w-full border-2 border-gray-200 p-3 rounded-md outline-none focus:border-indigo-500"
               type="text"
               id="jobLocation"
               value={formData.job_location}
@@ -230,7 +199,8 @@ function PostAJob() {
               onResize={(e) => "false"}
               type="text"
               id="description"
-              className="w-full py-2 px-3 mb-2 border-2 border-gray-200 p-3 rounded outline-none focus:border-indigo-500"
+              value={formData.job_description}
+              className="w-full py-2 px-3 mb-2 border-2 border-gray-200 p-3 rounded-md outline-none focus:border-indigo-500"
               placeholder="Enter description of job"
             />
             {formErrors.job_description && (
@@ -239,46 +209,9 @@ function PostAJob() {
               </span>
             )}
           </div>
-          <div className="flex items-center justify-between my-2">
-            <div className="flex flex-col gap-2">
-              <Select
-                className="w-full flex flex-col items-start justify-center"
-                defaultValue={defaultValue}
-                value={options.find(
-                  (option) => option.value === formData.job_type
-                )}
-                onChange={handleJobTypeChange}
-                placeholder="Please Select Job type"
-                options={options}
-              />
-              {formErrors.job_type && (
-                <span className="text-sm text-red-500">
-                  {formErrors.job_type}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              <Select
-                className="w-full flex flex-col items-start justify-center"
-                defaultValue={defaultValueLevel}
-                value={optionsLevel.find(
-                  (option) => option.value === formData.job_level
-                )}
-                onChange={handleJobLevelChange}
-                placeholder="Please Select Job Level"
-                options={optionsLevel}
-              />
-              {formErrors.job_level && (
-                <span className="text-sm text-red-500">
-                  {formErrors.job_level}
-                </span>
-              )}
-            </div>
-          </div>
-
           <button
             type="submit"
-            className="w-full py-2 mt-2 rounded bg-indigo-600 text-white font-semibold tracking-widest"
+            className="w-full py-2 mt-2 rounded bg-indigo-500 hover:bg-indigo-500/80 text-white font-semibold tracking-widest"
           >
             Submit
           </button>
@@ -289,4 +222,4 @@ function PostAJob() {
   );
 }
 
-export default withAuth(PostAJob);
+export default withAuth(EditJobPost);

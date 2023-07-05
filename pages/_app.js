@@ -1,10 +1,11 @@
 import '@/styles/globals.css'
 import { store } from '@/Store/store'
 import { Provider } from 'react-redux'
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import 'react-toastify/dist/ReactToastify.css';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import Head from 'next/head';
+import NavBar from '@/components/NavBar';
 
 
 
@@ -15,24 +16,38 @@ export default function App({
 })
 {
   const queryClient = new QueryClient()
-  // const router = useRouter();
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   const handleBeforeUnload = (event) => {
-  //     // event.preventDefault();
-  //     // localStorage.removeItem("user")
-  //     // Cookies.remove('token')
-  //   };
+  const currentPath = router.pathname;
+  console.log(currentPath);
 
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  const titles = {
+    
+    "/auth/login": "Login",
+    "/auth/register": "Signup",
+    "/forgot-password": "Forgot Password",
+    "/frontend/postAJob": "Post A Job",
+    "/frontend/dashboard": "Dashboard",
+    "/frontend/displayJobs": "Jobs",
+    "/frontend/singleJob/[id]": "Job Details",
+    "/frontend/editJob/[id]": "Edit Job",
+    "/frontend/applyJob/[id]": "Apply Job",
+    "/frontend/detailsPostedJob/[id]": "Details Posted Job",
+    "/frontend/editPostedJob/[id]": "Edit Posted Job",
+    "/frontend/applicationDetails/[id]": "Application Details",                                            
 
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   };
-  // }, [router]);
+  }  
+
+  const title = titles[currentPath];
+  
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
+        <Head>
+          <title>{`JobBit | ${title}`}</title>
+          <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        </Head>
+        <NavBar />
         <Component {...pageProps} />
       </Provider>
     </QueryClientProvider>

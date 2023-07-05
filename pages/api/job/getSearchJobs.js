@@ -4,7 +4,7 @@ import Job from '@/models/Job';
 
 export default async function handler(req, res) {
     await connectDBJobPortal();
-    console.log('req', req);
+    // console.log('req', req);
     const { method } = req;
     switch (method) {
         case 'GET':
@@ -18,7 +18,9 @@ export default async function handler(req, res) {
 
 const getSearchJobs = async (req, res) => {
     
-    const {job_type, query, location, category} = req.query;
+    const {jt, q, loc, jl} = req.query;
+    // console.log('req.query', req.query);
+
     const filter = {};
     if(query){
         filter.title = { $regex: query, $options: 'i' };

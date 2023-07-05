@@ -48,7 +48,7 @@ function PostedJobsDetails() {
         </div>
       ) : (
         <>
-          <NavBar />
+          
           <div className="w-full  pt-20">
             <div className="w-full h-20 bg-gray-50 text-indigo-600 font-bold flex items-center justify-center flex-col">
               <h1 className="text-3xl">Detail List of Jobs Application</h1>

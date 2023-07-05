@@ -26,6 +26,9 @@ import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import JobsCard from "@/components/JobsCard";
 import { withAuth } from "@/middleware/withAuth";
 import { FiExternalLink } from "react-icons/fi";
+import Link from "next/link";
+import { bool } from "joi";
+import { BiSolidEdit } from "react-icons/bi";
 
 function JobDetails() {
   const router = useRouter();
@@ -64,7 +67,7 @@ function JobDetails() {
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
         ]);
 
-        console.log("Job Data:", data);
+        console.log("Job Data:", data.user._id);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
 
@@ -173,14 +176,14 @@ function JobDetails() {
     }
   };
 
+  const postedUser = jobData?.user?._id === user?._id;
+
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <NavBar />
-
           <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
             {jobData && (
               <>
@@ -224,6 +227,16 @@ function JobDetails() {
                           )}
                         </button>
                       </div>
+                    )}
+
+                    {postedUser && (
+                      <Link
+                        href={`/frontend/editJob/${jobData?._id}`}
+                        className="flex items-center space-x-2 text-base text-white font-semibold text-center bg-indigo-600 hover:bg-indigo-400 border rounded transition-all duration-100 ease-out px-5 py-2"
+                      >
+                        <span>Edit</span>
+                        <BiSolidEdit size={20} />
+                      </Link>
                     )}
                   </div>
 

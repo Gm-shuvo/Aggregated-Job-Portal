@@ -79,7 +79,7 @@ function Dashboard() {
       <Loader />
       ) : (
         <>
-          <NavBar />
+          
           <div className="w-full h-screen pt-20 flex items-center justify-start flex-col">
             <div className="flex bg-gray-100 flex-wrap items-center justify-center w-full py-2 px-2">
               {/* applied Jobs */}
