@@ -5,8 +5,7 @@ import useOutsideClick from "@/hooks/useOutsideClick";
 import { BiSearchAlt } from "react-icons/bi";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { setUserData } from "@/Utils/UserSlice";
+import { setUserToken, setUserData } from "@/Utils/UserSlice";
 import {
   AiFillCaretDown,
   AiFillCaretUp,
@@ -53,6 +52,30 @@ export default function NavBar() {
       addListener();
     };
   }, [scrolled]);
+
+
+  
+  const token = Cookies.get("token");
+
+  useEffect(() => {
+    dispatch(
+      setUserData(
+        localStorage.getItem("user")
+          ? JSON.parse(localStorage.getItem("user"))
+          : null
+      )
+    );
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(setUserToken(token));
+    } else {
+      localStorage.removeItem("user");
+      dispatch(setUserData(null));
+    }
+  }, []);
+
 
   const handleLogout = async () => {
     Cookies.remove("token");
@@ -148,7 +171,7 @@ export default function NavBar() {
             <ul  className=" ">
               <li>
                 <Link
-                  href={"/frontend/userProfile"}
+                  href={'/frontend/profile'}
                   onClick={() => setIsUserOptionsOpen(false)}
                   className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base  font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600/80 hover:text-white transition-all duration-700"
                 >

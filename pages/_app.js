@@ -15,6 +15,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 })
 {
+  
   const queryClient = new QueryClient()
   const router = useRouter();
 
