@@ -35,7 +35,7 @@ function EditJobPost() {
       const { data } = await get_specified_job(id);
       console.log(data);
       setFormData({
-        id: data._id,
+        id: data?._id,
         user: user?._id,
         job_title: data.job_title,
         company_name: data.company_name,
@@ -211,7 +211,7 @@ function EditJobPost() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 mt-2 rounded bg-indigo-500 hover:bg-indigo-500/80 text-white font-semibold tracking-widest"
+            className="w-full py-2 mt-2 rounded bg-indigo-500 hover:bg-indigo-500/90 text-white font-semibold tracking-widest"
           >
             Submit
           </button>

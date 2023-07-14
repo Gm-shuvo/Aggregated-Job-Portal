@@ -71,13 +71,13 @@ export default function NavBar() {
   };
 
   useOutsideClick(navRef, handleClickOutside);
-  // useOutsideClick(optionRef, handleUserOptions);
+  useOutsideClick(navRef, handleUserOptions);
   return (
     <>
       <div
         className={`w-full ${
           scrolled ? "bg-indigo-600/70" : "bg-indigo-600/90"
-        } px-2 md:px-14 h-fit py-[10px] md:py-[16px] inset-0 text-white flex items-center justify-between fixed z-50`}
+        } px-2 md:px-14 h-[64px] py-[10px] md:py-[16px] inset-0 text-white flex items-center justify-between fixed z-50`}
         ref={navRef}
       >
         <div className="px-2 h-full flex items-center justify-center gap-10">
@@ -86,10 +86,12 @@ export default function NavBar() {
               JOB-BIT
             </p>
           </Link>
-          {currentPath === '/' && <div className="serach flex items-center justify-center gap-2 text-base">
-            <BiSearchAlt size={23} className="active_underline" />
-            Search
-          </div>}
+          {currentPath === "/" && (
+            <div className="serach flex items-center justify-center gap-2 text-base">
+              <BiSearchAlt size={23} className="active_underline" />
+              Search
+            </div>
+          )}
         </div>
         <div className=" px-2 h-full hidden items-center justify-center lg:flex"></div>
         <div className="px-2 h-full hidden items-center justify-center lg:flex">
@@ -111,10 +113,11 @@ export default function NavBar() {
               Post a job
             </Link>
           )}
-          <div className=" ">
+          <div>
             {user !== null ? (
               <div
-                className="hidden lg:flex items-center cursor-pointer"
+                
+                className="relative hidden px-3 py-2 border-2 bg-indigo-500 rounded-lg lg:flex items-center cursor-pointer"
                 onClick={() => setIsUserOptionsOpen(!isUserOptionsOpen)}
               >
                 <Avatar size={22} className=" text-white font-medium " />
@@ -138,52 +141,75 @@ export default function NavBar() {
             )}
           </div>
         </div>
+
+        {}
         {user !== null && isUserOptionsOpen && (
-          <div className="hidden lg:flex absolute top-16 right-10 bg-indigo-100 text-base text-black rounded shadow-lg w-40  flex-col gap-1">
-            <Link
-              href={"/frontend/profile"}
-              onClick={() => setIsUserOptionsOpen(false)}
-              className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base  font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
-            >
-              <Avatar size={20} />
-              Profile
-            </Link>
-            {user.type === "candidate" ? (
-              <Link
-                href={"/frontend/dashboard"}
-                onClick={() => setIsUserOptionsOpen(false)}
-                className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
-              >
-                <RxDashboard />
-                Dashboard
-              </Link>
-            ) : (
-              <Link
-                href={"/frontend/postedJob"}
-                onClick={() => setIsUserOptionsOpen(false)}
-                className="flex items-center px-2 justify-selft-start gap-2 py-2 w-full text-center text-base font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600 hover:text-white transition-all duration-700"
-              >
-                <RxDashboard />
-                My Jobs
-              </Link>
-            )}
-            <Link
-              href={"/"}
-              onClick={() => {handleLogout(); setIsUserOptionsOpen(false)}}
-              
-              className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base font-normal uppercase  hover:bg-indigo-600 hover:text-white transition-all duration-700"
-            >
-              <IoIosLogOut />
-              Logout
-            </Link>
+          <div  className="hidden lg:flex absolute top-16 right-16 bg-indigo-100/80 text-base text-black rounded shadow-lg w-40  flex-col gap-1">
+            <ul  className=" ">
+              <li>
+                <Link
+                  href={"/frontend/userProfile"}
+                  onClick={() => setIsUserOptionsOpen(false)}
+                  className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base  font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600/80 hover:text-white transition-all duration-700"
+                >
+                  <Avatar size={20} />
+                  Profile
+                </Link>
+              </li>
+              {user.type === "candidate" ? (
+                <li>
+                  <Link
+                    href={"/frontend/dashboard"}
+                    onClick={() => setIsUserOptionsOpen(false)}
+                    className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600/80 hover:text-white transition-all duration-700"
+                  >
+                    <RxDashboard />
+                    Dashboard
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link
+                    href={"/frontend/postedJob"}
+                    onClick={() => setIsUserOptionsOpen(false)}
+                    className="flex items-center px-2 justify-selft-start gap-2 py-2 w-full text-center text-base font-normal uppercase border-b-2 border-b-slate-100 hover:bg-indigo-600/80 hover:text-white transition-all duration-700"
+                  >
+                    <RxDashboard />
+                    My Jobs
+                  </Link>
+                </li>
+              )}
+              <li>
+                <Link
+                  href={"/"}
+                  onClick={() => {
+                    handleLogout();
+                    setIsUserOptionsOpen(false);
+                  }}
+                  className="flex items-center px-2 justify-self-start gap-2 py-2 w-full text-center text-base font-normal uppercase  hover:bg-indigo-600/80 hover:text-white transition-all duration-700"
+                >
+                  <IoIosLogOut />
+                  Logout
+                </Link>
+              </li>
+            </ul>
           </div>
         )}
 
         <div id="menu" className="flex lg:hidden py-2 ">
-          {isOpen? <AiOutlineClose size={25} className="text-2xl" onClick={() => setIsOpen((state) => !state)}/> : <AiOutlineMenu size={25}
-            className="text-2xl"
-            onClick={() => setIsOpen((state) => !state)}
-          />}
+          {isOpen ? (
+            <AiOutlineClose
+              size={25}
+              className="text-2xl"
+              onClick={() => setIsOpen((state) => !state)}
+            />
+          ) : (
+            <AiOutlineMenu
+              size={25}
+              className="text-2xl"
+              onClick={() => setIsOpen((state) => !state)}
+            />
+          )}
         </div>
 
         {isOpen && (
@@ -241,13 +267,15 @@ export default function NavBar() {
                     View Jobs
                   </Link>
 
-                  {user?.type==='candidate' && <Link
-                    href={"/frontend/dashboard"}
-                    onClick={() => setIsOpen(false)}
-                    className="w-full py-2 hover:bg-indigo-400 outline-none px-2 rounded text-center uppercase font-semibold"
-                  >
-                    Dashboard
-                  </Link>}
+                  {user?.type === "candidate" && (
+                    <Link
+                      href={"/frontend/dashboard"}
+                      onClick={() => setIsOpen(false)}
+                      className="w-full py-2 hover:bg-indigo-400 outline-none px-2 rounded text-center uppercase font-semibold"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
