@@ -58,8 +58,9 @@ const getSearchJobs = async (req, res) => {
 
     console.log("jobs", jobs);
     console.log("linkedInJobs", linkedInJobs);
-
-    return res.status(200).json({ success: true, data: jobs, message: "Jobs Found Successfully!" });
+    //combain both jobs
+    const combainJobs = [...jobs, ...linkedInJobs];
+    return res.status(200).json({ success: true, data: combainJobs, message: "Jobs Found Successfully!" });
   } catch (error) {
     console.log("Error in getting jobs (server) => ", error);
     return res.status(500).json({

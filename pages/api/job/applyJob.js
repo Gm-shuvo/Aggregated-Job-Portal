@@ -34,7 +34,7 @@ export default async function handler(req, res) {
         res.status(400).json({ success: false, message: "Invalid Request" });
     }
   } catch (error) {
-    // console.log("Error in getting a specified Job (server) => ", error);
+    console.log("Error in getting a specified Job (server) => ", error);
     return res.status(403).json({
       success: false,
       message: "Something Went Wrong. Please Retry login!",
@@ -56,13 +56,13 @@ const applyToJob = async (req, res) => {
       }
 
       // console.log("🚀 ~ file: applyJob.js:61 ~ form.parse ~ fields", fields);
-      // console.log("🚀 ~ file: applyJob.js:61 ~ form.parse ~ files", files);
+      console.log("🚀 ~ file: applyJob.js:61 ~ form.parse ~ files", files);
 
       const { name: [name], email: [email], about:[about], job: [job], user: [user] } = fields;
 
       const { error } = schema.validate({ name, email, about, job, user });
       if (error) {
-        // console.log("Error", error);
+        console.log("Error", error);
 
         return res.status(401).json({
           success: false,
@@ -76,7 +76,7 @@ const applyToJob = async (req, res) => {
       // console.log("cvFile", cvFile);
       const originalFileName  = files.cv[0].originalFilename
             
-      // console.log("🚀 ~ file: applyJob.js:79 ~ form.parse ~ originalFileName:", originalFileName)
+      console.log("🚀 ~ file: applyJob.js:79 ~ form.parse ~ originalFileName:", originalFileName)
       const fileExtension = path.extname(originalFileName);
       // console.log("🚀 ~ file: applyJob.js:81 ~ form.parse ~ fileExtension:", fileExtension)
       const randomString = crypto.randomBytes(6).toString("hex");
@@ -85,12 +85,14 @@ const applyToJob = async (req, res) => {
         fileExtension,
         ""
       )}_${randomString}${fileExtension}`;
-      // console.log("🚀 ~ file: applyJob.js:88 ~ form.parse ~ fileName:", fileName)
+      console.log("🚀 ~ file: applyJob.js:88 ~ form.parse ~ fileName:", fileName)
       
       
       const newPath = path.join(process.cwd(), "public", "uploads", fileName);
 
-      await fs.rename(cvFile, newPath);
+      // await fs.rename(cvFile, newPath);
+      await fs.copyFile(cvFile, newPath);
+      await fs.unlink(cvFile);
 
       const jobApplication = {
         name,
@@ -128,7 +130,7 @@ const applyToJob = async (req, res) => {
     }
     });
   } catch (error) {
-    // console.log("Error in apply job (server) => ", error);
+    console.log("Error in apply job (server) => ", error);
     
   }
 };

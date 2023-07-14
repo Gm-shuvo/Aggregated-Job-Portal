@@ -30,7 +30,7 @@ function ApplyJob() {
     user: activeUser?._id,
   });
 
-  // console.log("🚀 ~ file: [id].jsx:36 ~ ApplyJob ~ formikData:", formikData);
+  console.log("🚀 ~ file: [id].jsx:36 ~ ApplyJob ~ formikData:", formikData);
 
   // console.log(activeUser);
 
@@ -50,7 +50,7 @@ function ApplyJob() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("🚀 ~ file: [id].jsx:39 ~ validateForm ~ e:", validateForm());
+    console.log("🚀 ~ file: [id].jsx:39 ~ validateForm ~ e:", validateForm());
     if (!validateForm()) return;
 
     const form = new FormData();
@@ -61,7 +61,7 @@ function ApplyJob() {
     form.append("user", user);
     form.append("cv", file);
 
-    // console.log("🚀 ~ file: [id].jsx:50 ~ handleSubmit ~ form:", form);
+    console.log("🚀 ~ file: [id].jsx:50 ~ handleSubmit ~ form:", form);
 
     try {
       const res = await apply_job(form);

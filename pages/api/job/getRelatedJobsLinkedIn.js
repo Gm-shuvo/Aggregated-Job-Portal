@@ -47,7 +47,8 @@ const getRelatedJobs = async (query, res) => {
   try {
     
     const jobs = await mongoose.connection.db.collection('linkedinjobs').find({...filter}).limit(5).toArray();
-
+    console.log("🚀 ~ file: getRelatedJobsLinkedIn.js:50 ~ getRelatedJobs ~ jobs:", jobs)
+    
     return res.status(200).json({ success: true, data: jobs, message: 'Related Jobs' });
   } catch (error) {
     console.log('Error in getting a job (server) => ', error);

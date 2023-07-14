@@ -29,6 +29,8 @@ import { FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import { bool } from "joi";
 import { BiSolidEdit } from "react-icons/bi";
+import AppliedJobModal from "@/components/AppliedJobModal";
+import App from "@/pages/_app";
 
 function JobDetails() {
   const router = useRouter();
@@ -67,7 +69,7 @@ function JobDetails() {
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
         ]);
 
-        console.log("Job Data:", data.user._id);
+        console.log("Job Data:", data);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
 
@@ -152,7 +154,8 @@ function JobDetails() {
     if (s === "LinkedIn") {
       window.open(jobData?.apply_link, "_blank");
     } else {
-      router.push(`applyJob/${jobData?._id}`);
+      // router.push(`applyJob/${jobData?._id}`);
+      window.my_modal_1.showModal()
     }
   };
 
@@ -184,7 +187,7 @@ function JobDetails() {
         <Loader />
       ) : (
         <>
-          <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+          <section className="mx-auto my-20 py-10 max-w-7xl px-4 sm:px-6 lg:px-8 border-2 rounded-md">
             {jobData && (
               <>
                 <div className="">
@@ -206,7 +209,7 @@ function JobDetails() {
                         <button
                           onClick={handleApply}
                           disabled={isApplied}
-                          className={`px-3 py-2 flex items-center text-base text-white font-semibold text-center bg-indigo-600 hover:bg-indigo-400 border rounded transition-all duration-100 ease-out`}
+                          className={`px-3 py-2 flex items-center text-base text-white font-semibold text-center bg-indigo-600 hover:bg-indigo-400 border rounded transition-all duration-100 ease-out cursor-pointer`}
                         >
                           {s === "LinkedIn" ? (
                             <span className="flex items-center text-base font-medium gap-2 ">
@@ -228,6 +231,14 @@ function JobDetails() {
                         </button>
                       </div>
                     )}
+
+                    {
+                      <dialog id="my_modal_1" className="modal">
+
+                          <AppliedJobModal  id = {id}/>
+                          
+                      </dialog>
+                    }
 
                     {postedUser && (
                       <Link
