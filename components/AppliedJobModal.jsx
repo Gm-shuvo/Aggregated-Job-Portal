@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { withAuth } from "@/middleware/withAuth";
 import { useEffect, useState } from "react";
 
-function ApplyJob({ id }) {
+function ApplyJob({ id, setIsApplied }) {
   const router = useRouter();
   const activeUser = useSelector((state) => state.User?.userData);
   // const [id, setId] = useState('');
@@ -74,7 +74,7 @@ function ApplyJob({ id }) {
       if (res.success) {
         window.my_modal_1.close()
         toast.success("Your Application is Submitted, Redirecting...");
-
+        setIsApplied(true);
         setTimeout(() => {
           router.push("/frontend/dashboard");
         }, 500);
@@ -136,8 +136,11 @@ function ApplyJob({ id }) {
       >
         <div className="w-full mb-8  mt-10 flex flex-col items-start justify-center">
           <button
-            className="absolute top-0 right-0 p-4 m-1 bg-transparent border-0 text-black opacity-50 text-3xl leading-none outline-none focus:outline-none"
-            onClick={() => window.my_modal_1.close()}
+            className="btn absolute top-0 right-0 p-4 m-1 bg-transparent border-0 text-black opacity-50 text-3xl leading-none outline-none focus:outline-none"
+            onClick={(e) => {
+              e.preventDefault();
+              window.my_modal_1.close();
+            }}
           >
             <span className="bg-transparent text-black opacity-90 h-8 w-8 text-2xl block outline-none focus:outline-black">
               ×

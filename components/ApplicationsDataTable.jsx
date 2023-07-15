@@ -1,13 +1,15 @@
 import { change_application_status } from "@/Services/job";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
+import Select from "react-select";
 import { toast } from "react-toastify";
 
 export default function ApplicationsDataTable({ application }) {
   const router = useRouter();
 
   const [Data, setData] = useState([]);
+  console.log("🚀 ~ file: ApplicationsDataTable.jsx:12 ~ ApplicationsDataTable ~ Data:", Data)
 
   useEffect(() => {
     setData(application);
@@ -20,39 +22,50 @@ export default function ApplicationsDataTable({ application }) {
     setFilteredData(Data);
   }, [Data]);
 
-  const handleAcceptStatus = async (id) => {
-    const data = { id, status: "approved" };
+  const handleStatusChange = async (id, status) => {
+
+    const data = { id, status };
     const res = await change_application_status(data);
     if (res.success) {
-      router.push("/frontend/postedJob");
+      router.reload();
     } else {
       toast.error(res.message);
     }
   };
 
-  const handleRejectStatus = async (id) => {
-    const data = { id, status: "rejected" };
-    const res = await change_application_status(data);
-    if (res.success) {
-      router.push("/frontend/postedJob");
-    } else {
-      toast.error(res.message);
-    }
-  };
+  
 
-  const handleDownloadCV = async (name) => {
-    const fileUrl = `/uploads/${name}`;
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = "cv.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const optionsTypes = [
+    { value: "shortlisted", label: "Short-Listed" },
+    { value: "callForInterview", label: "CallFor-Interview" },
+    { value: "selected", label: "Selected" },
+    { value: "rejected", label: "Rejected" },
+  ];
+
+
+  const defaultValueTypes = useMemo(() => Data[0]?.status, []);
+
+  const handleDownloadCV = async (cvUrl, Name) => {
+
+    try {
+      const response = await fetch(cvUrl);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${Name}_cv.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log("Error in downloading CV:", error);
+    }
   };
 
   const columns = [
     {
-      name: "Name",
+      name: "Candidate name",
       selector: (row) => row?.user?.name,
     },
     {
@@ -62,62 +75,44 @@ export default function ApplicationsDataTable({ application }) {
     {
       name: "Status",
       selector: (row) => (
-        <p
-          className={`uppercase font-semibold ${
-            row?.status === "approved" ? "text-green-500" : ""
-          }  ${row?.status === "rejected" ? "text-red-600" : ""}`}
-        >
-          {row?.status}
-        </p>
-      ),
+        <span className="uppercase font-semibold">
+          {row?.status ? row?.status : "Not Specified"}
+        </span>
+      )
     },
     {
       name: "CV",
       selector: (row) => (
         <button
-          onClick={() => handleDownloadCV(row?.cv)}
-          className=" w-20 py-2 text-xs text-indigo-600 hover:text-white my-2 hover:bg-indigo-600 border border-indigo-600 rounded transition-all duration-700"
+          onClick={() => handleDownloadCV(row?.cv, row?.user?.name)}
+          className="w-30 p-2 text-xs text-center text-indigo-600 hover:text-white hover:bg-indigo-600 border border-indigo-600 rounded transition-all duration-700"
         >
           Download CV
         </button>
       ),
     },
-    {
-      name: "Status",
-      selector: (row) => (
-        <p
-          className={`uppercase font-semibold ${
-            row?.status === "approved" ? "text-green-500" : ""
-          }  ${row?.status === "rejected" ? "text-red-600" : ""}`}
-        >
-          {row?.status}
-        </p>
-      ),
-    },
+    
     {
       name: "Action",
       cell: (row) => (
-        <div className="flex items-center justify-start w-72 h-20">
-          <button
-            onClick={() =>
-              router.push(`/frontend/applicationDetail/${row?._id}`)
-            }
-            className=" w-20 py-2 mx-2 text-xs text-indigo-600 hover:text-white my-2 hover:bg-indigo-600 border border-indigo-600 rounded transition-all duration-700"
-          >
-            Details
-          </button>
-          <button
-            onClick={() => handleAcceptStatus(row?._id)}
-            className=" w-20 py-2 mx-2 text-xs text-green-600 hover:text-white my-2 hover:bg-green-600 border border-green-600 rounded transition-all duration-700"
-          >
-            Approved
-          </button>
-          <button
-            onClick={() => handleRejectStatus(row?._id)}
-            className=" w-20 py-2 mx-2 text-xs text-red-600 hover:text-white my-2 hover:bg-red-600 border border-red-600 rounded transition-all duration-700"
-          >
-            Reject
-          </button>
+        <div className="flex">
+        <Select
+        className="w-full flex flex-col items-start justify-center"
+        defaultValue={defaultValueTypes}
+        value={optionsTypes.find((option) => option.value === row?.status)}
+        onChange={(selectedOption) => { handleStatusChange(row?._id, selectedOption.value) }}
+        placeholder="Please Select Job Level"
+        options={optionsTypes}
+      />
+        
+        <button
+          onClick={() =>
+            router.push(`/frontend/applicationDetail/${row?._id}`)
+          }
+          className="w-20 py-2 mx-2 text-xs text-indigo-600 hover:text-white my-2 hover:bg-indigo-600 border border-indigo-600 rounded transition-all duration-700"
+        >
+          Details
+        </button>
         </div>
       ),
     },
@@ -140,12 +135,12 @@ export default function ApplicationsDataTable({ application }) {
   return (
     <>
       <DataTable
-        subHeaderAlign={"right"}
+        subHeaderAlign="right"
         columns={columns}
         data={filteredData}
         keyField="id"
         pagination
-        title={`Total Applications : ${Data?.length}`}
+        title={`Total Applications: ${Data?.length}`}
         fixedHeader
         fixedHeaderScrollHeight="79%"
         selectableRows
@@ -154,11 +149,11 @@ export default function ApplicationsDataTable({ application }) {
         persistTableHead
         subHeaderComponent={
           <input
-            className="w-60  py-2 px-2  outline-none  border-b-2 border-indigo-600"
-            type={"search"}
+            className="w-60 py-2 px-2 outline-none border-b-2 border-indigo-600"
+            type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={"Search with Applicant  name..."}
+            placeholder="Search with Applicant name..."
           />
         }
         className="h-screen bg-white"
