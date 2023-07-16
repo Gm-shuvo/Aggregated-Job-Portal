@@ -60,7 +60,7 @@ function PostedJobs() {
             <div className="w-full h-20 bg-gray-50 text-indigo-600 font-bold flex items-center justify-center flex-col">
               <h1 className="text-3xl">Posted Jobs</h1>
             </div>
-            <div className="w-1/2 h-full px-4 py-4 grid overflow-y-auto col-span-1 gap-2 flex-wrap">
+            <div className="w-1/2 h-full px-4 py-4 grid overflow-y-auto gap-8 flex-wrap">
               {myJobs?.map((job, index) => (
                 <JobsCard key={index} border={2} job={job} posted={true} />
               ))}

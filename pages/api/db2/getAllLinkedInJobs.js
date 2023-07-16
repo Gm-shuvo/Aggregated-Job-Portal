@@ -23,13 +23,14 @@ export default async function handler(req, res) {
 
 const getAllLinkedInJobs = async (page, res) => {
   try {
-    const pageSize = 10; // Adjust the page size as per your requirement
+    const pageSize = 20; // Adjust the page size as per your requirement
     const skip = (page - 1) * pageSize;
     
     const jobData = await mongoose.connection.db.collection('linkedinjobs')
       .find({})
       .skip(skip)
       .limit(pageSize)
+      .sort({ _id: -1 })
       .toArray();
     
     return res.status(200).json({

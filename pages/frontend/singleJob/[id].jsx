@@ -29,6 +29,7 @@ import { bool } from "joi";
 import { BiSolidEdit } from "react-icons/bi";
 import AppliedJobModal from "@/components/AppliedJobModal";
 import EditJobModal from "@/components/EditJobModal";
+import { FaCheckCircle } from "react-icons/fa";
 
 function JobDetails() {
   const router = useRouter();
@@ -58,9 +59,9 @@ function JobDetails() {
 
       try {
         const { data } =
-          s === "LinkedIn"
-            ? await get_specifiedLinkedin_job(id)
-            : await get_specified_job(id);
+          s === "JobBit"
+            ? await get_specified_job(id)
+            : await get_specifiedLinkedin_job(id);
 
         const [relatedJobs, relatedJobLinkedIn] = await Promise.all([
           get_related_jobs(data?.job_type, data?.job_level),
@@ -153,7 +154,7 @@ function JobDetails() {
       window.open(jobData?.apply_link, "_blank");
     } else {
       // router.push(`applyJob/${jobData?._id}`);
-      window.my_modal_1.showModal()
+      window.my_modal_1.showModal();
     }
   };
 
@@ -214,15 +215,25 @@ function JobDetails() {
                               Apply on LinkedIn <FiExternalLink />
                             </span>
                           ) : (
-                            <span>
-                              {isApplied ? (
-                                <span className="flex items-center gap-2 text-center text-base font-semibold">
-                                  {" "}
-                                  Applied{" "}
-                                  <BsCheckCircle size={15} className="" />
+                            <span className="flex items-center text-base font-medium gap-2 ">
+                              {s === "careerjet" ? (
+                                <span className="">
+                                  Apply on{" "}
+                                  <span className="capitalize">{s} <FiExternalLink /></span>
                                 </span>
                               ) : (
-                                "Apply Now"
+                                <span>
+                                  {isApplied ? (
+                                    <span className="flex items-center text-base font-medium gap-2 ">
+                                      Applied <FaCheckCircle />
+                                    </span>
+                                  ) : (
+                                    <span>
+                                      Apply on{" "}
+                                      <span className="capitalize">{s}</span>
+                                    </span>
+                                  )}
+                                </span>
                               )}
                             </span>
                           )}
@@ -244,11 +255,15 @@ function JobDetails() {
                     )}
                   </div>
 
-                    {
-                      <dialog id="my_modal_1" className="modal">
-                          {user?.type === 'candidate' ? <AppliedJobModal  id = {id} setIsApplied= {setIsApplied}/> : <EditJobModal jobId = {id} />}
-                      </dialog>
-                    }
+                  {
+                    <dialog id="my_modal_1" className="modal">
+                      {user?.type === "candidate" ? (
+                        <AppliedJobModal id={id} setIsApplied={setIsApplied} />
+                      ) : (
+                        <EditJobModal jobId={id} />
+                      )}
+                    </dialog>
+                  }
 
                   <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
                     <div className="flex items-center space-x-2">
@@ -295,7 +310,7 @@ function JobDetails() {
                   {isChoose === "Description" ? (
                     <div className="mb-6 text-base md:text-lg flex mx-auto mt-5">
                       <div className="whitespace-pre-wrap ">
-                        <ReactMarkdown >
+                        <ReactMarkdown>
                           {jobData?.job_description}
                         </ReactMarkdown>
                       </div>
@@ -305,18 +320,18 @@ function JobDetails() {
                       <p className="mb-4">No Reviews</p>
                     </div>
                   )}
-                
-                <div className="mt-10">
-                  <h2 className="text-lg md:text-xl font-semibold border-b-2 py-4">
-                    Related Jobs...
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                    {matchingData?.map((job) => (
-                      <JobsCard border={2} key={job.id} job={job} />
-                    ))}
+
+                  <div className="mt-10">
+                    <h2 className="text-lg md:text-xl font-semibold border-b-2 py-4">
+                      Related Jobs...
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                      {matchingData?.map((job) => (
+                        <JobsCard border={2} key={job.id} job={job} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-            </div>
               </>
             )}
           </section>
