@@ -106,6 +106,8 @@ export const get_specified_job = async (id) => {
 };
 
 export const get_specifiedLinkedin_job = async (id) => {
+  console.log("🚀 ~ file: index.js:109 ~ constget_specifiedLinkedin_job= ~ id:", id)
+  
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/job/getSpecifiedLinkedInJob?id=${id}`,

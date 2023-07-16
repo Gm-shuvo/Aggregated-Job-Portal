@@ -1,5 +1,3 @@
-import NavBar from "@/components/NavBar";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { MdOutlineCategory } from "react-icons/md";
 import { BsBookmarkCheck, BsCheckCircle } from "react-icons/bs";
@@ -29,6 +27,8 @@ import { FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import { bool } from "joi";
 import { BiSolidEdit } from "react-icons/bi";
+import AppliedJobModal from "@/components/AppliedJobModal";
+import EditJobModal from "@/components/EditJobModal";
 
 function JobDetails() {
   const router = useRouter();
@@ -152,7 +152,8 @@ function JobDetails() {
     if (s === "LinkedIn") {
       window.open(jobData?.apply_link, "_blank");
     } else {
-      router.push(`applyJob/${jobData?._id}`);
+      // router.push(`applyJob/${jobData?._id}`);
+      window.my_modal_1.showModal()
     }
   };
 
@@ -230,15 +231,24 @@ function JobDetails() {
                     )}
 
                     {postedUser && (
-                      <Link
-                        href={`/frontend/editJob/${jobData?._id}`}
-                        className="flex items-center space-x-2 text-base text-white font-semibold text-center bg-indigo-600 hover:bg-indigo-400 border rounded transition-all duration-100 ease-out px-5 py-2"
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.my_modal_1.showModal();
+                        }}
+                        className="flex items-center space-x-2 text-base text-white font-semibold text-center bg-indigo-600 hover:bg-indigo-500 border rounded-md transition-all duration-100 ease-out px-5 py-2"
                       >
                         <span>Edit</span>
                         <BiSolidEdit size={20} />
-                      </Link>
+                      </button>
                     )}
                   </div>
+
+                    {
+                      <dialog id="my_modal_1" className="modal">
+                          {user?.type === 'candidate' ? <AppliedJobModal  id = {id} setIsApplied= {setIsApplied}/> : <EditJobModal jobId = {id} />}
+                      </dialog>
+                    }
 
                   <div className="flex items-center space-x-4 mt-6 mb-3 text-xs md:text-sm text-gray-500">
                     <div className="flex items-center space-x-2">

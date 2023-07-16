@@ -1,3 +1,4 @@
+import { call } from 'file-loader';
 import mongoose from 'mongoose';
 
 const ApplyJobSchema = new mongoose.Schema({
@@ -29,7 +30,7 @@ const ApplyJobSchema = new mongoose.Schema({
     status: {
         type: String,
         default: 'pending',
-        enum: ['pending', 'accepted', 'rejected']
+        enum: ['pending', 'shortlisted', 'callForInterview', 'selected', 'rejected',]
     }
 }, { timestamps: true });
 

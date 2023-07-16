@@ -13,13 +13,6 @@ import dotenv from "dotenv";
 import { toast, ToastContainer } from "react-toastify";
 dotenv.config();
 
-const locations = [
-  "Dhaka",
-  "Chittagong",
-  "Khulna",
-
-  // Add more location suggestions as needed
-];
 
 export default function Intro() {
   const [search, setSearch] = useState("");
@@ -31,6 +24,7 @@ export default function Intro() {
   const [jobType, setJobType] = useState("");
   const [jobLevel, setJobLevel] = useState("");
   const [error, setError] = useState("");
+  const [scrollToJobs, setScrollToJobs] = useState(false);
   // console.log(jobData)
   console.log(query, location, jobType, jobLevel);
   const handleSearch = async (e) => {
@@ -43,15 +37,31 @@ export default function Intro() {
 
       // Handle the response data
 
-      console.log(response.data);
-      setFilteredJobs(response.data);
+      console.log(response.data.data);
+      setFilteredJobs(response.data.data);
+      setQuery("");
+      setLocation("");
+      setJobType("");
+      setJobLevel("");
+
       setDoneSearch(true);
+      setScrollToJobs(true);
     } catch (error) {
       console.error(error);
     }
   };
   // console.log(query, category, location, jobType)
 
+  // Scroll to job results when they are available
+  useEffect(() => {
+    if (scrollToJobs && doneSearch) {
+      window.scrollTo({
+        top: document.getElementById("jobs").offsetTop - 100,
+        behavior: "smooth",
+      });
+      setScrollToJobs(false); // Reset the flag
+    }
+  }, [scrollToJobs, doneSearch]);
   /// Auto Suggest
 
   const {
@@ -66,7 +76,7 @@ export default function Intro() {
 
   const handleJobTypesChange = useCallback((selectedOption) => {
     const selectedValue = selectedOption ? selectedOption.value : "";
-    setJobType(selectedValue);
+    setJobType(selectedValue);a
   }, []);
 
   const optionsTypes = [
@@ -125,7 +135,7 @@ export default function Intro() {
 
   return (
     <>
-      <div className="w-full h-full flex items-center lg:justify-start py-24 justify-center flex-wrap  ">
+      <div className=" relative w-full h-full flex items-center lg:justify-start py-24 justify-center flex-wrap  ">
         <div className="lg:w-12/12 w-full sm:p-2 h-full my-2 flex items-center justify-center px-2 md:items-start md:justify-start md:p-20 flex-col ">
           <h1 className="md:text-6xl text-4xl sm:text-5xl font-extrabold mb-4 text-black ">
             To Choose <span className="text-indigo-600">Right Jobs.</span>{" "}
@@ -147,6 +157,7 @@ export default function Intro() {
               <input
                 onChange={(e) => setQuery(e.target.value)}
                 type="text"
+                value={query}
                 placeholder="Job keyword or company..."
                 className=" w-full  h-full px-4 bg-indigo-100/80 text-base py-3 outline-none rounded-md "
               />
@@ -223,8 +234,9 @@ export default function Intro() {
           <Image width={600} height={700} src="/intro.png" alt="no-image-found" />
         </div> */}
       </div>
+      <div id="jobs" className="flex items-center justify-center mt-10 mb-6">
       {doneSearch && (
-        <div className="w-full flex flex-wrap items-center justify-center py-2 px-2">
+        <div className="w-11/12  flex flex-col items-center justify-center gap-4 py-2 px-2">
           {Array.isArray(filterJobs) && filterJobs.length > 0 ? (
             filterJobs?.map((job) => {
               return <JobsCard job={job} key={job?._id} />;
@@ -236,6 +248,7 @@ export default function Intro() {
           )}
         </div>
       )}
+      </div>
       <ToastContainer />
     </>
   );

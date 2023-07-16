@@ -4,9 +4,6 @@ import BookMarkJob from "@/models/Bookmark";
 import Joi from "joi";
 import { Types, isValidObjectId } from "mongoose";
 
-import Job from "@/models/Job";
-import User from "@/models/User";
-import Linkedinjob from "@/models/Linkedinjob";
 
 
 export const config = {

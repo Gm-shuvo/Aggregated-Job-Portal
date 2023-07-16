@@ -20,7 +20,8 @@ export default async function handler({ method, query }, res) {
 
 const getSpecifiedJob = async (data, res) => {
   const { id } = data;
-  const _id = new Types.ObjectId(id);
+  
+  const _id = Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null;
   if(!_id){
     return res.status(400).json({ success: false, message: 'Invalid Job ID format' });
   }
@@ -28,6 +29,7 @@ const getSpecifiedJob = async (data, res) => {
   try {
 
     const jobData = await connection.db.collection('linkedinjobs').findOne({ _id: _id });
+    // const linkedInJobs = await mongoose.connection.db.collection('linkedinjobs').find({...filter}).limit(5).toArray();
 
     if (!jobData) {
       return res.status(404).json({ success: false, message: 'Job not found' });

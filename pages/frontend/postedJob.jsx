@@ -33,7 +33,7 @@ function PostedJobs() {
         setIsLoading(true);
         const res = await get_my_posted_job(id);
 
-        console.log(res);
+        // console.log(res);
 
         if (res.success) {
           dispatch(setMyJobs(res?.data));

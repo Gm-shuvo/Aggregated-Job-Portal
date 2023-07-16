@@ -39,7 +39,7 @@ export default function App({
 
   }  
 
-  const title = titles[currentPath];
+  const title = titles[currentPath] || 'JobBit';
   
   return (
     <QueryClientProvider client={queryClient}>
