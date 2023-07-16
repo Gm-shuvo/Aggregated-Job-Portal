@@ -6,22 +6,31 @@ import {PiClockCountdownBold} from 'react-icons/pi'
 import { MdOutlineCategory } from 'react-icons/md';
 import { SiOpslevel } from 'react-icons/si';
 import Link from 'next/link';
+import { AiFillLinkedin } from 'react-icons/ai';
 const JobsCard = ({ job, border, posted }) => {
   // console.log()
-  const { job_title, company_name, job_description, job_location, job_date, job_type, job_level,source} = job;
-  // console.log(job);
+  const { job_title, company_name, job_description, job_location, job_date, job_type, job_level, source} = job;
+  console.log(job);
   const router = useRouter();
 
-
+  // console.log(source === 'LinkedIn')
   return (
     <Link href={`${posted ? `/frontend/detailPostedJob/${job?._id}`:`/frontend/singleJob/${job?._id}?s=${source}`}`} key={job?._id}
-    className={`group w-full p-4 cursor-pointer transition-all duration-600 border-2 border-${border} shadow-gray-400 hover:shadow-lg rounded-md ring-2 ring-indigo-500/90`}
+    className={`group w-full p-4 cursor-pointer transition-all duration-600 border-2 border-${border} shadow-gray-400 hover:shadow-lg rounded-md ring-2 ring-indigo-500/80`}
   >
-    <div
+    <li 
       
     >
       <div className="flex justify-center space-y-1 flex-col">
+        <div className="flex items-center space-x-2 text-xs  md:text-sm">
         <h1 className="font-semibold text-base md:text-lg">{job_title}</h1>
+        {source === 'LinkedIn' && 
+          
+          <AiFillLinkedin size={18}/>
+           
+          }
+        </div>
+        
         <div className="flex items-start  space-x-4 text-xs text-gray-500 md:text-sm">
           <div className="flex items-baseline justify-center space-x-1">
             <TbBuildingBank className=''/>
@@ -51,7 +60,7 @@ const JobsCard = ({ job, border, posted }) => {
                 </div>}
             </div>
       </div>
-    </div>
+    </li>
     </Link>
   );
 }

@@ -67,7 +67,7 @@ function JobDetails() {
           get_related_jobs_linkedin(data?.job_type, data?.job_level),
         ]);
 
-        console.log("Job Data:", data.user._id);
+        console.log("Job Data:", data);
         console.log("Related Jobs:", relatedJobs?.data);
         console.log("Related Jobs LinkedIn:", relatedJobLinkedIn?.data);
 
@@ -185,10 +185,10 @@ function JobDetails() {
         <Loader />
       ) : (
         <>
-          <section className="mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+          <section className="mx-auto my-24 max-w-7xl ">
             {jobData && (
               <>
-                <div className="">
+                <div className="px-6 sm:px-6 lg:px-8 mt-8 pt-12 pb-8 border-2 rounded shadow-md">
                   <div className="flex justify-between items-center ">
                     <h1 className="text-lg sm:text-xl md:text-2xl max-w-[400px] font-semibold text-gray-800">
                       {jobData?.job_title}
@@ -294,8 +294,8 @@ function JobDetails() {
                   </div>
                   {isChoose === "Description" ? (
                     <div className="mb-6 text-base md:text-lg flex mx-auto mt-5">
-                      <div className="whitespace-pre-wrap">
-                        <ReactMarkdown>
+                      <div className="whitespace-pre-wrap ">
+                        <ReactMarkdown >
                           {jobData?.job_description}
                         </ReactMarkdown>
                       </div>
@@ -305,7 +305,7 @@ function JobDetails() {
                       <p className="mb-4">No Reviews</p>
                     </div>
                   )}
-                </div>
+                
                 <div className="mt-10">
                   <h2 className="text-lg md:text-xl font-semibold border-b-2 py-4">
                     Related Jobs...
@@ -316,6 +316,7 @@ function JobDetails() {
                     ))}
                   </div>
                 </div>
+            </div>
               </>
             )}
           </section>

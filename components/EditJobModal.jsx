@@ -35,10 +35,10 @@ function EditJobPost({jobId}) {
       setFormData({
         id: data?._id,
         user: user?._id,
-        job_title: data.job_title,
-        company_name: data.company_name,
-        job_location: data.job_location,
-        job_description: data.job_description,
+        job_title: data?.job_title,
+        company_name: data?.company_name,
+        job_location: data?.job_location,
+        job_description: data?.job_description,
       });
     };
     if (id) fetchData();

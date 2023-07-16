@@ -11,6 +11,7 @@ import { LuLocateFixed } from "react-icons/lu";
 
 import dotenv from "dotenv";
 import { toast, ToastContainer } from "react-toastify";
+import { Loader } from "./Loader";
 dotenv.config();
 
 
@@ -39,10 +40,10 @@ export default function Intro() {
 
       console.log(response.data.data);
       setFilteredJobs(response.data.data);
-      setQuery("");
-      setLocation("");
-      setJobType("");
-      setJobLevel("");
+      // setQuery("");
+      // setLocation("");
+      // setJobType("");
+      // setJobLevel("");
 
       setDoneSearch(true);
       setScrollToJobs(true);
@@ -62,6 +63,8 @@ export default function Intro() {
       setScrollToJobs(false); // Reset the flag
     }
   }, [scrollToJobs, doneSearch]);
+
+  
   /// Auto Suggest
 
   const {
@@ -76,7 +79,7 @@ export default function Intro() {
 
   const handleJobTypesChange = useCallback((selectedOption) => {
     const selectedValue = selectedOption ? selectedOption.value : "";
-    setJobType(selectedValue);a
+    setJobType(selectedValue);
   }, []);
 
   const optionsTypes = [
@@ -236,7 +239,7 @@ export default function Intro() {
       </div>
       <div id="jobs" className="flex items-center justify-center mt-10 mb-6">
       {doneSearch && (
-        <div className="w-11/12  flex flex-col items-center justify-center gap-4 py-2 px-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center gap-8 py-2 px-4 mb-6 md:px-14">
           {Array.isArray(filterJobs) && filterJobs.length > 0 ? (
             filterJobs?.map((job) => {
               return <JobsCard job={job} key={job?._id} />;
@@ -247,7 +250,8 @@ export default function Intro() {
             </p>
           )}
         </div>
-      )}
+      ) 
+    }
       </div>
       <ToastContainer />
     </>

@@ -47,9 +47,10 @@
     position: absolute;
     width:100%;
     --tw-bg-opacity: 1;
-    background-color: rgb(224 231 255 / 0.7);
+    background-color: rgba(255, 255, 255, 0.7);
     display: flex;
     flex-direction: column;
+    box-shadow: 0 0 11px 0 rgb(0 0 0 / 20%);
     
     padding: 10px 20px;
     /* bottom: -110px; */
@@ -64,7 +65,7 @@
 }
 .react-autosuggest__suggestions-container--open li:hover{
     --tw-bg-opacity: 1;
-    background-color: rgb(126, 151, 235);
+    background-color: rgb(168, 183, 231);
     border-radius: 4px;
     cursor: pointer;
     

@@ -100,7 +100,7 @@ export default function NavBar() {
       <div
         className={`w-full ${
           scrolled ? "bg-indigo-600/70" : "bg-indigo-600/90"
-        } px-2 md:px-14 h-[64px] py-[10px] md:py-[16px] inset-0 text-white flex items-center justify-between fixed z-50`}
+        } px-4 md:px-8 h-[64px] py-[10px] md:py-[16px] inset-0 text-white flex items-center justify-between fixed z-50`}
         ref={navRef}
       >
         <div className="px-2 h-full flex items-center justify-center gap-10">
