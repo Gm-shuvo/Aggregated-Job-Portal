@@ -2,6 +2,7 @@ import { connectDBJobPortal } from "@/DB/DbJobProtal";
 import Job from "@/models/Job";
 import Linkedinjob from "@/models/Linkedinjob";
 import User from "@/models/User";
+import { formatDistanceToNow } from "date-fns";
 import mongoose from "mongoose";
 
 export default async function handler(req, res) {
@@ -54,12 +55,24 @@ const getSearchJobs = async (req, res) => {
   
   try {
     const jobs = await Job.find({...filter}).populate({path:'user', select: 'name email _id', model: User}).sort({created_At: 'asc'});
+  //   const formattedJobs = jobs.map((job) => {
+  //     const formattedJob = job.toObject();
+  //     formattedJob.job_date = formatDistanceToNow(new Date(job.createdAt), { addSuffix: true });
+  //     return formattedJob;
+  // });
     const linkedInJobs = await mongoose.connection.db.collection('linkedinjobs').find({...filter}).limit(5).toArray();
 
     console.log("jobs", jobs);
     console.log("linkedInJobs", linkedInJobs);
+
+    const formattedJobs = jobs.map((job) => {
+      const formattedJob = job.toObject();
+      formattedJob.job_date = formatDistanceToNow(new Date(job.createdAt), { addSuffix: true });
+      return formattedJob;
+    });
+    console.log("formattedJobs", formattedJobs);
     //combain both jobs
-    const combainJobs = [...jobs, ...linkedInJobs];
+    const combainJobs = [...formattedJobs, ...linkedInJobs];
     return res.status(200).json({ success: true, data: combainJobs, message: "Jobs Found Successfully!" });
   } catch (error) {
     console.log("Error in getting jobs (server) => ", error);
