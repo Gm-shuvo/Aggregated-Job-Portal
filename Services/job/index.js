@@ -45,7 +45,7 @@ export const edit_post_job = async (formData) => {
 };
 
 // get job api
-export const get_job = async (page = 1) => {
+export const get_job = async (page) => {
   console.log("page", page);
   try {
     const res = await fetch(
@@ -65,7 +65,7 @@ export const get_job = async (page = 1) => {
 };
 
 //get Linedin job api
-export const get_linkedin_job = async (page = 1) => {
+export const get_linkedin_job = async (page) => {
   console.log("page", page);
   try {
     const res = await fetch(
