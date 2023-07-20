@@ -31,6 +31,7 @@ const getAllJobs = async (page, res) => {
 
     const jobData = await Job.find({})
       .skip(skip)
+      .sort({ createdAt: -1 })
       .limit(pageSize);
 
     const formattedJobs = jobData.map((job) => {
