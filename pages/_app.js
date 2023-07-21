@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import Head from 'next/head';
 import NavBar from '@/components/NavBar';
+import { Analytics } from '@vercel/analytics/react';
 
 
 
@@ -50,6 +51,7 @@ export default function App({
         </Head>
         <NavBar />
         <Component {...pageProps} />
+        <Analytics />
       </Provider>
     </QueryClientProvider>
   )

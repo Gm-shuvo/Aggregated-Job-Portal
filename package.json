@@ -13,6 +13,7 @@
     "@next/font": "13.2.3",
     "@reduxjs/toolkit": "^1.9.3",
     "@tanstack/react-query": "^4.29.17",
+    "@vercel/analytics": "^1.0.1",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.37.3",
